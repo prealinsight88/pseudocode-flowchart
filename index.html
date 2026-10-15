@@ -1,0 +1,936 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>AlgoQuest — Pseudocode & Flowchart</title>
+<style>
+:root{--bg:#0f172a;--bg2:#0b1226;--card:rgba(30,41,75,.55);--line:rgba(148,163,184,.18);--cyan:#06b6d4;--blue:#3b82f6;--green:#10b981;--red:#f43f5e;--amber:#f59e0b;--text:#e2e8f0;--muted:#94a3b8;--mono:'JetBrains Mono','Fira Code',Consolas,'Courier New',monospace}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:'Inter',system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;line-height:1.6;min-height:100vh;overflow-x:hidden}
+[hidden]{display:none!important}
+h1{font-size:clamp(1.5rem,3vw,2.1rem);line-height:1.2}
+h2{font-size:1.3rem}h3{font-size:1.08rem;margin-bottom:8px}h4{margin:16px 0 8px;color:var(--cyan);font-size:.95rem;letter-spacing:.03em}
+p{margin-bottom:8px}ul,ol{padding-left:22px;margin-bottom:8px}li{margin:3px 0}
+b{color:#f1f5f9}small{color:var(--muted)}
+.muted{color:var(--muted)}
+.bgfx{position:fixed;inset:0;z-index:-1;overflow:hidden;background:radial-gradient(1200px 600px at 80% -10%,rgba(59,130,246,.18),transparent 60%),radial-gradient(900px 500px at -10% 30%,rgba(6,182,212,.14),transparent 60%),var(--bg)}
+.bgfx:after{content:"";position:absolute;inset:0;background-image:linear-gradient(rgba(148,163,184,.06) 1px,transparent 1px),linear-gradient(90deg,rgba(148,163,184,.06) 1px,transparent 1px);background-size:44px 44px;-webkit-mask-image:radial-gradient(circle at 50% 30%,#000,transparent 75%);mask-image:radial-gradient(circle at 50% 30%,#000,transparent 75%)}
+.orb{position:absolute;border-radius:50%;filter:blur(60px);opacity:.3;animation:float 14s ease-in-out infinite}
+.orb.a{width:340px;height:340px;background:var(--cyan);left:-80px;top:20%}
+.orb.b{width:300px;height:300px;background:var(--blue);right:-60px;top:55%;animation-delay:-5s}
+.orb.c{width:240px;height:240px;background:var(--green);left:40%;bottom:-100px;animation-delay:-9s}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-26px)}}
+@keyframes glow{0%,100%{box-shadow:0 0 0 0 rgba(6,182,212,.0),0 0 14px rgba(6,182,212,.25)}50%{box-shadow:0 0 0 4px rgba(6,182,212,.08),0 0 30px rgba(6,182,212,.55)}}
+@keyframes pop{from{opacity:0;transform:translateY(10px) scale(.985)}to{opacity:1;transform:none}}
+@keyframes shake{0%,100%{transform:translateX(0)}20%,60%{transform:translateX(-6px)}40%,80%{transform:translateX(6px)}}
+@keyframes dash{to{stroke-dashoffset:-20}}
+@keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.08)}}
+@keyframes flowarrow{0%{transform:translateX(-4px);opacity:.3}50%{opacity:1}100%{transform:translateX(4px);opacity:.3}}
+@keyframes fall{to{transform:translate(var(--dx),105vh) rotate(720deg);opacity:.8}}
+/* top bar */
+.top{position:sticky;top:0;z-index:50;display:flex;justify-content:space-between;align-items:center;padding:10px 22px;background:rgba(11,18,38,.82);backdrop-filter:blur(12px);border-bottom:1px solid var(--line)}
+.brand{display:flex;gap:10px;align-items:center;cursor:pointer}
+.brand b{display:block;line-height:1.1;font-size:1.05rem;letter-spacing:.02em}
+.logo{width:38px;height:38px;border-radius:11px;display:grid;place-items:center;font-size:22px;color:#04121c;background:linear-gradient(135deg,var(--cyan),var(--blue));animation:glow 3s infinite}
+.topr{display:flex;gap:10px}
+.chip{background:rgba(15,23,42,.8);border:1px solid var(--line);padding:5px 14px;border-radius:999px;font-family:var(--mono);font-size:.9rem;white-space:nowrap}
+.chip.warn{border-color:var(--red);color:#fecdd3;animation:pulse 1s infinite}
+.chip.xp{color:#6ee7b7;border-color:rgba(16,185,129,.4)}
+/* layout */
+.layout{display:grid;grid-template-columns:268px 1fr;gap:22px;max-width:1440px;margin:0 auto;padding:22px}
+#nav{position:sticky;top:78px;align-self:start;display:flex;flex-direction:column;gap:8px}
+.nv{display:flex;gap:12px;align-items:center;text-align:left;background:var(--card);border:1px solid var(--line);color:var(--text);padding:10px 12px;border-radius:14px;cursor:pointer;font:inherit;transition:.25s}
+.nv:hover{border-color:rgba(6,182,212,.6);transform:translateX(3px)}
+.nv .ic{width:36px;height:36px;border-radius:10px;display:grid;place-items:center;background:rgba(6,182,212,.12);font-size:1.1rem;flex:none}
+.nv b{display:block;font-size:.88rem;line-height:1.25}
+.nv.act{background:linear-gradient(135deg,rgba(6,182,212,.22),rgba(59,130,246,.2));border-color:var(--cyan);box-shadow:0 0 22px rgba(6,182,212,.25)}
+.nv.dn .ic{background:rgba(16,185,129,.2);color:var(--green);font-weight:700}
+.navfoot{margin-top:6px;padding:12px;border:1px dashed var(--line);border-radius:14px;font-size:.8rem}
+main{min-width:0}
+#app>*{animation:pop .4s ease both}
+/* cards */
+.card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:20px;margin-bottom:18px;backdrop-filter:blur(8px);box-shadow:0 10px 30px rgba(0,0,0,.25);transition:.25s}
+.card.hov:hover{transform:translateY(-3px);border-color:rgba(6,182,212,.55);box-shadow:0 0 0 1px rgba(6,182,212,.2),0 14px 40px rgba(6,182,212,.14)}
+.g2,.g3,.g4{display:grid;gap:16px;margin-bottom:18px}
+.g2{grid-template-columns:repeat(auto-fit,minmax(300px,1fr))}
+.g3{grid-template-columns:repeat(auto-fit,minmax(230px,1fr))}
+.g4{grid-template-columns:repeat(auto-fit,minmax(180px,1fr))}
+.g2>.card,.g3>.card,.g4>.card{margin-bottom:0}
+.pill{display:inline-block;background:rgba(6,182,212,.15);color:#67e8f9;border:1px solid rgba(6,182,212,.4);border-radius:999px;padding:2px 12px;font-size:.72rem;font-weight:700;letter-spacing:.08em;margin-bottom:6px}
+.mh{display:flex;justify-content:space-between;gap:18px;flex-wrap:wrap;align-items:flex-end;margin-bottom:18px}
+.mtimer{min-width:210px;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:10px 14px}
+.mtimer b{font-family:var(--mono);font-size:1.15rem;color:#67e8f9}
+.bar{height:6px;border-radius:99px;background:rgba(148,163,184,.2);overflow:hidden;margin-top:6px}
+.bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--cyan),var(--green));transition:width .6s}
+/* buttons */
+.btn{font:inherit;font-weight:600;border:1px solid var(--line);background:rgba(15,23,42,.8);color:var(--text);padding:9px 18px;border-radius:12px;cursor:pointer;transition:.2s}
+.btn:hover{border-color:var(--cyan);transform:translateY(-1px)}
+.btn:disabled{opacity:.45;cursor:not-allowed;transform:none}
+.btn.primary{background:linear-gradient(135deg,var(--cyan),var(--blue));color:#03121b;border:none;box-shadow:0 6px 20px rgba(6,182,212,.35)}
+.btn.primary:hover{box-shadow:0 8px 30px rgba(6,182,212,.6)}
+.btn.good{background:linear-gradient(135deg,var(--green),#059669);color:#03150f;border:none}
+.btn.ghost{background:transparent}
+.btn.sm{padding:5px 12px;font-size:.85rem}
+.btn.big{padding:14px 28px;font-size:1.05rem}
+.btns{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-top:10px}
+.fin{display:flex;justify-content:center;margin:26px 0 40px}
+/* tabs */
+.tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px}
+.tab{font:inherit;font-weight:600;font-size:.9rem;background:var(--card);border:1px solid var(--line);color:var(--muted);padding:8px 16px;border-radius:999px;cursor:pointer;transition:.2s}
+.tab:hover{color:var(--text);border-color:var(--cyan)}
+.tab.act{color:#03121b;background:linear-gradient(135deg,var(--cyan),var(--blue));border-color:transparent;box-shadow:0 0 18px rgba(6,182,212,.4)}
+.tabbody.pop{animation:pop .35s ease}
+/* inputs */
+.inp{background:#0a1022;border:1px solid var(--line);color:var(--text);border-radius:10px;padding:8px 12px;font:inherit;font-size:.92rem;min-width:0}
+.inp:focus{outline:none;border-color:var(--cyan);box-shadow:0 0 0 3px rgba(6,182,212,.2)}
+textarea.inp{width:100%;min-height:110px;font-family:var(--mono);resize:vertical}
+select.inp{cursor:pointer}
+.vl{display:flex;gap:8px;align-items:center;font-family:var(--mono);font-size:.9rem}
+.vl span{color:#67e8f9}
+/* code */
+.code{background:#0a1022;border:1px solid var(--line);border-radius:12px;padding:10px 0;font-family:var(--mono);font-size:.84rem;overflow-x:auto}
+.ln{display:flex;gap:10px;padding:1px 14px;white-space:pre;border-left:3px solid transparent;transition:.2s}
+.ln .no{color:#475569;width:22px;flex:none;text-align:right;user-select:none}
+.ln.on{background:rgba(6,182,212,.16);border-left-color:var(--cyan)}
+.ln.pk{cursor:pointer}.ln.pk:hover{background:rgba(244,63,94,.14);border-left-color:var(--red)}
+.ln.ok{background:rgba(16,185,129,.18);border-left-color:var(--green)}
+.ln.bad{background:rgba(244,63,94,.18);border-left-color:var(--red)}
+.kw{color:#38bdf8;font-weight:700}.str{color:#34d399}.num{color:#fbbf24}
+.console{background:#050a18;border:1px solid var(--line);border-radius:12px;padding:10px 14px;font-family:var(--mono);font-size:.84rem;min-height:56px;margin-top:10px}
+.console div{animation:pop .3s}
+.console .g{color:#6ee7b7;font-weight:700}.console .m{color:var(--muted)}.console .r{color:#fda4af}
+.mon{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:6px;min-height:30px}
+.var{background:rgba(59,130,246,.15);border:1px solid rgba(59,130,246,.45);padding:2px 12px;border-radius:8px;font-family:var(--mono);font-size:.85rem;animation:pop .3s}
+.runbar{display:flex;gap:12px;flex-wrap:wrap;align-items:center;margin-top:10px}
+.demo{display:grid;grid-template-columns:minmax(280px,1fr) minmax(300px,1.1fr);gap:16px}
+.flowbox{background:#0a1022;border:1px solid var(--line);border-radius:14px;padding:10px;overflow:auto;display:flex;justify-content:center}
+.flowbox.clk .fnode{cursor:pointer}
+/* flowchart svg */
+.flow{height:auto}
+.fnode rect,.fnode polygon{fill:#0b1226;stroke-width:1.8;transition:.3s}
+.fnode.term rect{stroke:var(--green)}.fnode.io polygon{stroke:var(--blue)}.fnode.proc rect{stroke:var(--cyan)}.fnode.dec polygon{stroke:var(--amber)}
+.fnode text{fill:#e2e8f0;font:12px var(--mono);pointer-events:none}
+.fnode.on rect,.fnode.on polygon{fill:rgba(6,182,212,.3);stroke:#fff;filter:drop-shadow(0 0 9px #06b6d4)}
+.fnode.done rect,.fnode.done polygon{fill:rgba(16,185,129,.16)}
+.fnode.sel rect,.fnode.sel polygon{fill:rgba(59,130,246,.3);stroke:#93c5fd}
+.edge{fill:none;stroke:#475569;stroke-width:1.6}
+.edge.on{stroke:#06b6d4;stroke-width:2.6;stroke-dasharray:7 5;animation:dash .5s linear infinite}
+.edge.past{stroke:#0e8aa6;stroke-width:2.2}
+.elabel{fill:#fbbf24;font:700 11px var(--mono)}
+.sym{width:100%;max-width:130px;height:auto}
+.sym *{fill:rgba(255,255,255,.04);stroke:var(--c);stroke-width:2.2}
+.sym .hd{fill:var(--c)}
+.sym text{fill:var(--c);stroke:none;font:700 16px var(--mono)}
+.symcard{text-align:center}
+.symcard .sym{margin:4px auto 6px;animation:float 5s ease-in-out infinite}
+/* misc ui */
+.tag{display:inline-block;font:700 .72rem var(--mono);padding:2px 8px;border-radius:6px;white-space:nowrap}
+.tag.in{background:rgba(59,130,246,.2);color:#93c5fd}.tag.if{background:rgba(245,158,11,.2);color:#fcd34d}.tag.then{background:rgba(16,185,129,.2);color:#6ee7b7}
+.row{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:8px}
+.row .inp{flex:1;min-width:90px}.row .inp.vn{max-width:140px}.row .inp.bval{max-width:100px}.row .inp.bo{max-width:76px;flex:none}
+.rowh{display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap;align-items:center}
+.x{background:none;border:1px solid var(--line);color:var(--muted);border-radius:8px;width:30px;height:30px;cursor:pointer}
+.x:hover{color:var(--red);border-color:var(--red)}
+.warn{color:#fcd34d;font-size:.85rem}.okmsg{color:#6ee7b7;font-size:.88rem;margin-top:8px}
+.lab{display:grid;grid-template-columns:minmax(320px,1fr) minmax(340px,1.15fr);gap:18px;align-items:start}
+.labR>.card:last-child,.lab>.card{margin-bottom:18px}
+table{width:100%;border-collapse:collapse;font-size:.88rem;margin:8px 0}
+th,td{padding:8px 10px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
+th{color:var(--cyan);font-size:.8rem;text-transform:uppercase;letter-spacing:.05em}
+td code,p code,li code{font-family:var(--mono);background:#0a1022;padding:1px 6px;border-radius:5px;color:#67e8f9}
+.callout{border-left:4px solid var(--cyan);background:rgba(6,182,212,.08);padding:10px 14px;border-radius:0 12px 12px 0;margin:10px 0}
+.callout.warn2{border-color:var(--amber);background:rgba(245,158,11,.08)}
+.callout.ok2{border-color:var(--green);background:rgba(16,185,129,.08)}
+/* mcq */
+.mcq{margin-bottom:16px}.mcq .q{font-weight:600;margin-bottom:8px}
+.opts{display:grid;gap:8px}
+.opt{font:inherit;text-align:left;background:rgba(15,23,42,.8);border:1px solid var(--line);color:var(--text);padding:9px 14px;border-radius:12px;cursor:pointer;transition:.2s}
+.opt:hover:not(:disabled){border-color:var(--cyan);transform:translateX(3px)}
+.opt.ok{background:rgba(16,185,129,.2);border-color:var(--green)}
+.opt.bad{background:rgba(244,63,94,.18);border-color:var(--red);animation:shake .4s}
+.opt:disabled{cursor:default}
+.fb{margin-top:6px;font-size:.88rem;min-height:1.2em}.fb.good{color:#6ee7b7}.fb.bad{color:#fda4af}
+/* hero */
+.hero{position:relative;overflow:hidden;padding:42px 30px;text-align:center;background:linear-gradient(135deg,rgba(6,182,212,.14),rgba(59,130,246,.12) 55%,rgba(16,185,129,.1))}
+.hero h1{font-size:clamp(2rem,5vw,3.2rem);background:linear-gradient(90deg,#67e8f9,#93c5fd,#6ee7b7);-webkit-background-clip:text;background-clip:text;color:transparent}
+.hero .fl{position:absolute;opacity:.5;border:2px solid var(--cyan);animation:float 7s ease-in-out infinite;box-shadow:0 0 22px rgba(6,182,212,.5)}
+.hero .f1{width:64px;height:64px;left:6%;top:18%;transform:rotate(45deg);border-color:var(--amber)}
+.hero .f2{width:96px;height:44px;right:7%;top:20%;border-color:var(--blue);transform:skewX(-20deg);animation-delay:-2s}
+.hero .f3{width:90px;height:40px;left:12%;bottom:14%;border-radius:20px;border-color:var(--green);animation-delay:-4s}
+.hero .f4{width:60px;height:60px;right:12%;bottom:14%;border-radius:50%;animation-delay:-3s}
+.hero>*:not(.fl){position:relative}
+.alloc{display:flex;height:34px;border-radius:12px;overflow:hidden;gap:3px;margin:10px 0}
+.alloc i{display:grid;place-items:center;font:700 .75rem var(--mono);color:#03121b;font-style:normal}
+.mapcard{cursor:pointer;display:flex;gap:12px;align-items:flex-start}
+.mapcard .big,.casebtn .big{font-size:1.9rem}
+.casebtn{font:inherit;color:var(--text);text-align:left;cursor:pointer;display:flex;flex-direction:column;gap:2px}
+.casebtn.act{border-color:var(--cyan);box-shadow:0 0 24px rgba(6,182,212,.35)}
+.ipo{display:flex;align-items:center;gap:10px;flex-wrap:wrap;justify-content:center;margin:12px 0}
+.ipo .bx{padding:14px 22px;border:2px solid var(--line);border-radius:14px;text-align:center;min-width:130px;transition:.3s}
+.ipo .bx.on{border-color:var(--cyan);box-shadow:0 0 26px rgba(6,182,212,.6);transform:scale(1.06)}
+.ipo .ar{font-size:1.6rem;color:var(--cyan);animation:flowarrow 1.2s infinite}
+/* game */
+.gbar{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;align-items:center}
+.lvnav{display:flex;gap:8px;flex-wrap:wrap}
+.lvb{font:inherit;font-weight:700;background:rgba(15,23,42,.8);color:var(--text);border:1px solid var(--line);border-radius:12px;padding:6px 14px;cursor:pointer;display:flex;flex-direction:column;align-items:center;min-width:86px;transition:.2s}
+.lvb small{font-weight:400;font-size:.68rem}
+.lvb.act{border-color:var(--cyan);box-shadow:0 0 20px rgba(6,182,212,.45)}
+.lvb.dn{border-color:var(--green);color:#6ee7b7}
+.lvb:disabled{opacity:.4;cursor:not-allowed}
+.gscore b{color:#fbbf24;font-size:1.2rem}
+.pairs{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.pcol{display:grid;gap:10px}
+.pr{font:inherit;color:var(--text);background:rgba(15,23,42,.8);border:2px solid var(--line);border-radius:14px;padding:8px 12px;cursor:pointer;transition:.2s;min-height:68px;display:flex;align-items:center;justify-content:center;text-align:center}
+.pr:hover{border-color:var(--cyan)}
+.pr.pick{border-color:var(--cyan);box-shadow:0 0 20px rgba(6,182,212,.5)}
+.pr.solved{border-color:var(--green);background:rgba(16,185,129,.14);cursor:default}
+.pr.wrong{animation:shake .4s;border-color:var(--red)}
+.pr .sym{max-width:100px}
+.stm{display:flex;gap:10px;align-items:center;justify-content:space-between;flex-wrap:wrap;padding:8px 0;border-bottom:1px solid var(--line)}
+.stm.ok{color:#6ee7b7}
+.stm.wrong{animation:shake .4s}
+.chips{display:flex;gap:6px;flex-wrap:wrap;margin:8px 0;min-height:32px}
+.chp{font:.82rem var(--mono);background:rgba(59,130,246,.18);border:1px solid rgba(59,130,246,.5);border-radius:8px;padding:3px 10px}
+.fillcode{background:#0a1022;border:1px solid var(--line);border-radius:12px;padding:12px 14px;font-family:var(--mono);font-size:.86rem;overflow-x:auto}
+.fillcode .l3{white-space:pre;padding:3px 0}
+.fillcode .inp{padding:3px 8px;font-family:var(--mono);font-size:.82rem;margin:0 2px}
+.fillcode .inp.ok,.inp.ok{border-color:var(--green);background:rgba(16,185,129,.15)}
+.fillcode .inp.bad,.inp.bad{border-color:var(--red);background:rgba(244,63,94,.15)}
+.pool{display:flex;gap:8px;flex-wrap:wrap;margin:8px 0}
+.pl{font:.84rem var(--mono);background:#0a1022;border:1px solid var(--blue);color:var(--text);border-radius:10px;padding:6px 12px;cursor:pointer;transition:.2s}
+.pl:hover{box-shadow:0 0 14px rgba(59,130,246,.6);transform:translateY(-2px)}
+.ansbox{min-height:60px}
+.lik{display:grid;grid-template-columns:1fr auto;gap:10px;align-items:center;padding:10px 0;border-bottom:1px solid var(--line)}
+.scale{display:flex;gap:6px}
+.scale label{cursor:pointer}
+.scale input{display:none}
+.scale span{display:grid;place-items:center;width:38px;height:38px;border-radius:50%;border:2px solid var(--line);font-weight:700;transition:.2s}
+.scale input:checked+span{background:linear-gradient(135deg,var(--cyan),var(--blue));color:#03121b;border-color:transparent;box-shadow:0 0 16px rgba(6,182,212,.6)}
+.scale span:hover{border-color:var(--cyan)}
+.meter{height:14px;border-radius:99px;background:rgba(148,163,184,.2);overflow:hidden}
+.meter i{display:block;height:100%;background:linear-gradient(90deg,var(--blue),var(--green));border-radius:99px;transition:width .8s}
+.confetti{position:fixed;inset:0;pointer-events:none;z-index:99}
+.confetti i{position:absolute;top:-14px;width:8px;height:14px;border-radius:2px;animation:fall 2s ease-in forwards}
+#toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);z-index:100;display:flex;flex-direction:column;gap:6px;align-items:center;pointer-events:none}
+#toast div{background:rgba(11,18,38,.95);border:1px solid var(--cyan);padding:8px 18px;border-radius:12px;box-shadow:0 0 24px rgba(6,182,212,.4);animation:pop .3s;font-size:.9rem}
+.report{white-space:pre-wrap;font-family:var(--mono);font-size:.82rem;background:#0a1022;border:1px solid var(--line);border-radius:12px;padding:14px}
+@media(max-width:960px){
+ .layout{grid-template-columns:1fr;padding:14px}
+ #nav{position:sticky;top:62px;z-index:40;flex-direction:row;overflow-x:auto;background:rgba(15,23,42,.92);padding:8px;border-radius:14px;margin:0 -2px}
+ .nv{flex:none;padding:6px 10px}.nv small,.navfoot{display:none}
+ .demo,.lab,.pairs{grid-template-columns:1fr}
+ .top{padding:8px 12px}.brand small{display:none}
+}
+@media print{body{background:#fff;color:#000}.bgfx,.top,#nav,.btn,.fin{display:none!important}.card{background:#fff;box-shadow:none;border:1px solid #bbb}.layout{display:block}*{color:#000!important}}
+</style>
+</head>
+<body>
+<div class="bgfx"><i class="orb a"></i><i class="orb b"></i><i class="orb c"></i></div>
+<header class="top">
+ <div class="brand" data-go="0"><span class="logo">◇</span><div><b>AlgoQuest</b><small>Pseudocode &amp; Flowchart</small></div></div>
+ <div class="topr"><div class="chip" id="tchip" title="Sisa waktu dari 120 menit">⏱ <b id="timer">120:00</b></div><div class="chip xp">⚡ <b id="xp">0</b> XP</div></div>
+</header>
+<div class="layout"><nav id="nav"></nav><main id="app"></main></div>
+<div id="toast"></div>
+
+<script>
+'use strict';
+/* =====================================================================
+   AlgoQuest — Platform belajar mandiri 120 menit
+   Materi: Pseudocode & Flowchart (Input, Output, Percabangan)
+   ===================================================================== */
+const $=(s,r=document)=>r.querySelector(s),$$=(s,r=document)=>[...r.querySelectorAll(s)];
+const esc=s=>String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+const attr=s=>esc(s).replace(/"/g,'&quot;');
+const shuf=a=>a.map(x=>[Math.random(),x]).sort((p,q)=>p[0]-q[0]).map(x=>x[1]);
+const fmt=s=>String(Math.floor(s/60)).padStart(2,'0')+':'+String(s%60).padStart(2,'0');
+let UID=0;
+const MODS=[
+ {n:1,t:'Dasar Teori',min:15,ic:'📘',d:'Konsep, simbol ISO, pseudocode & percabangan'},
+ {n:2,t:'Studi Kasus',min:20,ic:'🔍',d:'Penilaian, lampu lalu lintas, diskon'},
+ {n:3,t:'Lab Maya',min:30,ic:'🧪',d:'Simulator algoritma interaktif'},
+ {n:4,t:'Game 5 Level',min:30,ic:'🎮',d:'Cocokkan, telusuri, lengkapi, debug, tantang'},
+ {n:5,t:'LKPD Digital',min:15,ic:'📝',d:'Soal latihan & tugas mandiri'},
+ {n:6,t:'Refleksi & Evaluasi',min:10,ic:'🪞',d:'Self-assessment & refleksi metakognitif'}];
+
+/* ---------- state & persistence ---------- */
+const KEY='algoquest_v1';
+const S0=()=>({started:false,startAt:0,score:0,gs:0,mod:0,name:'',done:{},spent:{},ans:{},cs:0,lab:null,miss:{},game:{cur:1,done:{}},lk:{fill:{},t1:'',t1ok:false,t2:{v:'umur',c:'umur >= 17',a:'Boleh mendaftar',b:'Belum cukup umur'}},rf:{lik:{},q:['','','']},over:false});
+let S=(function(){try{const r=JSON.parse(localStorage.getItem(KEY));if(r&&r.v===1)return Object.assign(S0(),r.s);}catch(e){}return S0();})();
+function save(){try{localStorage.setItem(KEY,JSON.stringify({v:1,s:S}));}catch(e){}}
+function toast(m){const t=$('#toast'),d=document.createElement('div');d.textContent=m;t.appendChild(d);setTimeout(()=>d.remove(),2400);}
+function addScore(n,t){S.score+=n;if(t==='g')S.gs=(S.gs||0)+n;$('#xp').textContent=S.score;const g=$('#gs');if(g)g.textContent=S.gs||0;toast('+'+n+' XP');save();}
+function burst(){const c=document.createElement('div');c.className='confetti';const cl=['#06b6d4','#3b82f6','#10b981','#f59e0b','#f43f5e'];for(let i=0;i<40;i++){const p=document.createElement('i');p.style.left=Math.random()*100+'vw';p.style.background=cl[i%5];p.style.animationDelay=Math.random()*.5+'s';p.style.setProperty('--dx',(Math.random()*240-120)+'px');c.appendChild(p);}document.body.appendChild(c);setTimeout(()=>c.remove(),2800);}
+
+/* ---------- timer ---------- */
+function remain(){return S.started?Math.max(0,7200-Math.floor((Date.now()-S.startAt)/1000)):7200;}
+let tickN=0;
+function tick(){
+ const r=remain();$('#timer').textContent=fmt(r);$('#tchip').classList.toggle('warn',S.started&&r<600&&r>0);
+ if(!S.started)return;
+ if(S.mod>0){S.spent[S.mod]=(S.spent[S.mod]||0)+1;const m=MODS[S.mod-1],sp=S.spent[S.mod],a=$('#mtime'),b=$('#mbar');
+  if(a)a.textContent=fmt(sp)+' / '+m.min+':00';if(b){b.style.width=Math.min(100,sp/(m.min*60)*100)+'%';b.style.background=sp>m.min*60?'var(--amber)':'';}}
+ if(r===0&&!S.over){S.over=true;toast('⏰ Waktu 120 menit habis — selesaikan dan lihat laporanmu!');}
+ if(++tickN%10===0)save();
+}
+setInterval(tick,1000);
+
+/* ---------- pseudocode highlighter & code view ---------- */
+const KW=/("[^"]*")|\b(START|END|INPUT|OUTPUT|IF|THEN|ELSE|ENDIF|AND|OR|NOT)\b|\b(\d+(?:\.\d+)?)\b/g;
+function hl(s){return esc(s).replace(KW,(m,a,b,c)=>a?'<span class="str">'+a+'</span>':b?'<span class="kw">'+b+'</span>':'<span class="num">'+c+'</span>');}
+function codeHTML(lines,cls){return '<div class="code '+(cls||'')+'">'+lines.map((l,i)=>'<div class="ln" data-i="'+i+'"><span class="no">'+(i+1)+'</span><span>'+hl(l)+'</span></div>').join('')+'</div>';}
+function markLine(el,i){$$('.ln.on',el).forEach(x=>x.classList.remove('on'));if(i!==undefined&&i!==null){const l=$('.ln[data-i="'+i+'"]',el);if(l)l.classList.add('on');}}
+function log(out,t,c){const d=document.createElement('div');if(c)d.className=c;d.textContent=t;out.appendChild(d);out.scrollTop=out.scrollHeight;}
+const msgOf=o=>String(o).replace(/^OUTPUT\s*/,'').replace(/^"|"$/g,'');
+
+/* ---------- flowchart engine ---------- */
+function nodeSize(t,text){
+ const L=Math.max(...String(text).split('\n').map(s=>s.length));
+ if(t==='term')return[Math.max(110,L*8+44),40];
+ if(t==='dec')return[Math.max(176,Math.ceil(L*7.2*1.3+40)),86];
+ return[Math.max(160,Math.ceil(L*7.2+48)),44];
+}
+function buildFlow(m){
+ const nodes=[],edges=[],pre=m.pre||[],br=m.branches||[];
+ const YES=m.swap?'Tidak':'Ya',NO=m.swap?'Ya':'Tidak';
+ let maxMain=110,maxDec=0,maxOut=0;
+ pre.forEach(p=>maxMain=Math.max(maxMain,nodeSize(p.t,p.text)[0]));
+ br.forEach(b=>{maxDec=Math.max(maxDec,nodeSize('dec',b.cond+' ?')[0]);maxOut=Math.max(maxOut,nodeSize('io',b.out)[0]);});
+ const elseW=m.elseOut?nodeSize('io',m.elseOut)[0]:0;
+ const cx=Math.ceil(Math.max(maxMain,maxDec,elseW,120)/2)+14;
+ const outX=br.length?Math.ceil(cx+maxDec/2+58+maxOut/2):cx;
+ const W=br.length?Math.ceil(outX+maxOut/2+22):cx*2;
+ const mk=(id,t,text,y,x)=>{const sz=nodeSize(t,text);const n={id,t,text,x:x===undefined?cx:x,y,w:sz[0],h:sz[1]};nodes.push(n);return n;};
+ const below=(p,id,t,text,gap)=>mk(id,t,text,p.y+p.h/2+gap+nodeSize(t,text)[1]/2);
+ const link=(a,b,o)=>edges.push(Object.assign({f:a.id,to:b.id,fs:'b',ts:'t'},o||{}));
+ let prev=mk('start','term','START',28);
+ pre.forEach((p,i)=>{const n=below(prev,'p'+i,p.t,p.text,28);link(prev,n);prev=n;});
+ const decs=[],outs=[];
+ br.forEach((b,k)=>{
+  const n=below(prev,'d'+k,'dec',b.cond+' ?',k?38:28);
+  link(prev,n,k?{label:NO}:undefined);
+  const o=mk('o'+k,'io',b.out,n.y,outX);
+  link(n,o,{fs:'r',ts:'l',label:YES});
+  decs.push(n);outs.push(o);prev=n;
+ });
+ let endN;
+ if(br.length&&m.elseOut){const e=below(prev,'e','io',m.elseOut,42);link(prev,e,{label:NO});endN=below(e,'end','term','END',28);link(e,endN);}
+ else if(br.length){endN=below(prev,'end','term','END',42);link(prev,endN,{label:NO});}
+ else{endN=below(prev,'end','term','END',28);link(prev,endN);}
+ outs.forEach(o=>link(o,endN,{fs:'r',ts:'r',via:[[W-8,o.y],[W-8,endN.y]]}));
+ return{w:W,h:Math.ceil(endN.y+endN.h/2+16),nodes,edges};
+}
+function nodeSVG(n){
+ const x=n.x,y=n.y,w=n.w,h=n.h,t=n.t;let s;
+ if(t==='term')s='<rect x="'+(x-w/2)+'" y="'+(y-h/2)+'" width="'+w+'" height="'+h+'" rx="'+(h/2)+'"/>';
+ else if(t==='proc')s='<rect x="'+(x-w/2)+'" y="'+(y-h/2)+'" width="'+w+'" height="'+h+'" rx="4"/>';
+ else if(t==='io')s='<polygon points="'+(x-w/2+14)+','+(y-h/2)+' '+(x+w/2)+','+(y-h/2)+' '+(x+w/2-14)+','+(y+h/2)+' '+(x-w/2)+','+(y+h/2)+'"/>';
+ else s='<polygon points="'+x+','+(y-h/2)+' '+(x+w/2)+','+y+' '+x+','+(y+h/2)+' '+(x-w/2)+','+y+'"/>';
+ const ls=String(n.text).split('\n'),y0=y-(ls.length-1)*7;
+ return '<g class="fnode '+t+'" data-id="'+n.id+'">'+s+ls.map((l,i)=>'<text x="'+x+'" y="'+(y0+i*14+4)+'" text-anchor="middle">'+esc(l)+'</text>').join('')+'</g>';
+}
+function flowHTML(sp){
+ const u=++UID,M={};sp.nodes.forEach(n=>M[n.id]=n);
+ const A=(n,s)=>s==='t'?[n.x,n.y-n.h/2]:s==='b'?[n.x,n.y+n.h/2]:s==='l'?[n.x-n.w/2,n.y]:[n.x+n.w/2,n.y];
+ let g='',lab='';
+ sp.edges.forEach(e=>{
+  const a=M[e.f],b=M[e.to],p=[A(a,e.fs)].concat(e.via||[],[A(b,e.ts)]);
+  const d='M'+p.map(q=>q[0].toFixed(1)+' '+q[1].toFixed(1)).join(' L');
+  g+='<path class="edge" data-e="'+e.f+'>'+e.to+'" d="'+d+'" marker-end="url(#ar'+u+')" data-mon="url(#aron'+u+')" data-moff="url(#ar'+u+')"/>';
+  if(e.label){const s=p[0],lx=e.fs==='r'?s[0]+8:s[0]+8,ly=e.fs==='r'?s[1]-8:s[1]+16;lab+='<text class="elabel" x="'+lx+'" y="'+ly+'">'+e.label+'</text>';}
+ });
+ return '<svg class="flow" viewBox="0 0 '+sp.w+' '+sp.h+'" style="width:100%;max-width:'+sp.w+'px" role="img" aria-label="Flowchart"><defs><marker id="ar'+u+'" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#64748b"/></marker><marker id="aron'+u+'" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#06b6d4"/></marker></defs>'+g+sp.nodes.map(nodeSVG).join('')+lab+'</svg>';
+}
+function clearFlow(box){
+ $$('.fnode',box).forEach(n=>n.classList.remove('on','done','sel'));
+ $$('.edge',box).forEach(e=>{e.classList.remove('on','past');e.setAttribute('marker-end',e.dataset.moff);});
+}
+function showStep(box,ids,i){
+ $$('.fnode.on',box).forEach(n=>{n.classList.remove('on');n.classList.add('done');});
+ $$('.edge.on',box).forEach(e=>{e.classList.remove('on');e.classList.add('past');});
+ const n=$('[data-id="'+ids[i]+'"]',box);if(n)n.classList.add('on');
+ if(i>0){const e=$('[data-e="'+ids[i-1]+'>'+ids[i]+'"]',box);if(e){e.classList.add('on');e.setAttribute('marker-end',e.dataset.mon);e.parentNode.appendChild(e);}}
+}
+function playPath(box,ids,o){
+ o=o||{};const tok=(box._tok=(box._tok||0)+1);clearFlow(box);
+ return new Promise(res=>{let i=0;
+  const step=()=>{
+   if(box._tok!==tok)return res(false);
+   if(i>=ids.length)return res(true);
+   showStep(box,ids,i);if(o.onStep)o.onStep(ids[i],i);i++;setTimeout(step,o.delay||700);
+  };step();});
+}
+function pathFor(m,k){
+ const ids=['start'];(m.pre||[]).forEach((_,i)=>ids.push('p'+i));
+ const br=m.branches||[];
+ for(let j=0;j<br.length;j++){ids.push('d'+j);if(j===k){ids.push('o'+j);break;}}
+ if(k===-1&&m.elseOut)ids.push('e');
+ ids.push('end');return ids;
+}
+function genPseudo(m){
+ const L=[],map={};const push=(s,id)=>{if(id)map[id]=L.length;L.push(s);};
+ push('START','start');
+ (m.pre||[]).forEach((p,i)=>push(p.code||p.text,'p'+i));
+ (m.branches||[]).forEach((b,k)=>{push((k?'ELSE IF ':'IF ')+b.cond+' THEN','d'+k);push('   '+b.out,'o'+k);});
+ if(m.elseOut){push('ELSE');push('   '+m.elseOut,'e');}
+ if((m.branches||[]).length)push('ENDIF');
+ push('END','end');return{lines:L,map};
+}
+/* symbol icons (ISO 5807) */
+function symSVG(k){
+ const c={term:'#10b981',io:'#3b82f6',proc:'#06b6d4',dec:'#f59e0b',flow:'#94a3b8',conn:'#a78bfa'}[k];let s='';
+ if(k==='term')s='<rect x="10" y="14" width="100" height="36" rx="18"/>';
+ else if(k==='io')s='<polygon points="28,14 112,14 92,50 8,50"/>';
+ else if(k==='proc')s='<rect x="10" y="14" width="100" height="36" rx="3"/>';
+ else if(k==='dec')s='<polygon points="60,6 112,32 60,58 8,32"/>';
+ else if(k==='flow')s='<line x1="12" y1="32" x2="96" y2="32"/><polygon class="hd" points="108,32 94,24 94,40"/>';
+ else s='<circle cx="60" cy="32" r="22"/><text x="60" y="38" text-anchor="middle">A</text>';
+ return '<svg viewBox="0 0 120 64" class="sym" style="--c:'+c+'">'+s+'</svg>';
+}
+/* ---------- generic demo (kode + flowchart + eksekusi animasi) ---------- */
+function createDemo(el,cfg){
+ const m=cfg.model,ps=genPseudo(m),vars=cfg.vars||[];
+ const ctr=vars.map((v,i)=>'<label class="vl"><span>'+v.name+'</span>'+(v.options?'<select class="inp dv" data-i="'+i+'">'+v.options.map(o=>'<option'+(o==v.value?' selected':'')+'>'+o+'</option>').join('')+'</select>':'<input class="inp dv" data-i="'+i+'" type="'+(v.type==='number'?'number':'text')+'" value="'+attr(v.value)+'" style="width:110px">')+'</label>').join('');
+ el.innerHTML='<div class="demo"><div><div class="cb">'+codeHTML(ps.lines)+'</div><div class="runbar">'+ctr+'<button class="btn primary run">▶ Jalankan</button><button class="btn ghost rst">↺ Ulang</button></div><div class="console"><div class="out"><div class="m">Tekan ▶ Jalankan untuk melihat alur eksekusi…</div></div></div></div><div class="flowbox"></div></div>';
+ const fb=$('.flowbox',el),cb=$('.cb',el),out=$('.out',el);
+ fb.innerHTML=flowHTML(buildFlow(m));
+ const br=m.branches||[];
+ $('.run',el).onclick=()=>{
+  const vals={};$$('.dv',el).forEach(inp=>{const v=vars[+inp.dataset.i];vals[v.name]=v.type==='number'?parseFloat(inp.value):inp.value;});
+  if(vars.some(v=>v.type==='number'&&isNaN(vals[v.name]))){toast('Isi angka yang valid dulu ya');return;}
+  let k=-1;for(let j=0;j<br.length;j++){if(br[j].test&&br[j].test(vals)){k=j;break;}}
+  out.innerHTML='';
+  playPath(fb,pathFor(m,k),{delay:700,onStep:id=>{
+   markLine(cb,ps.map[id]);let r;
+   if(cfg.say)r=cfg.say(id,vals,k);
+   if(r===undefined){
+    const i=+id.slice(1);
+    if(id==='start')r='▶ Program dimulai';
+    else if(id[0]==='p'&&vars[i]&&/^INPUT/.test(m.pre[i].text))r='INPUT '+vars[i].name+' → '+vals[vars[i].name];
+    else if(id[0]==='d')r='Cek: '+br[i].cond+' → '+(i===k?'BENAR ✔':'SALAH ✘');
+    else if(id[0]==='o')r='OUTPUT: '+msgOf(br[i].out);
+    else if(id==='e')r='OUTPUT: '+msgOf(m.elseOut);
+    else if(id==='end')r='■ Program selesai';
+    if(r&&(id[0]==='o'||id==='e'))return log(out,r,'g');
+   }
+   if(r)log(out,r,id==='end'||id==='start'?'m':'');
+  }});
+ };
+ $('.rst',el).onclick=()=>{fb._tok=(fb._tok||0)+1;clearFlow(fb);markLine(cb);out.innerHTML='<div class="m">Siap dijalankan ulang.</div>';};
+}
+/* ---------- tabs & mcq ---------- */
+function mkTabs(host,items,start){
+ host.innerHTML='<div class="tabs">'+items.map((x,i)=>'<button class="tab" data-i="'+i+'">'+x.t+'</button>').join('')+'</div><div class="tabbody"></div>';
+ const body=$('.tabbody',host),bar=$('.tabs',host);
+ const show=i=>{$$('.tab',bar).forEach((b,j)=>b.classList.toggle('act',j===i));body.innerHTML='';body.classList.remove('pop');void body.offsetWidth;body.classList.add('pop');items[i].r(body);};
+ bar.addEventListener('click',e=>{const b=e.target.closest('.tab');if(b)show(+b.dataset.i);});
+ show(start||0);
+}
+function mcq(id,q,opts,a,why,pts){
+ const st=S.ans[id]&&S.ans[id].ok;
+ return '<div class="mcq" data-id="'+id+'" data-a="'+a+'" data-why="'+attr(why)+'" data-pts="'+(pts||5)+'"><p class="q">'+q+'</p><div class="opts">'+opts.map((o,i)=>'<button class="opt'+(st&&i===a?' ok':'')+'" data-i="'+i+'"'+(st?' disabled':'')+'>'+o+'</button>').join('')+'</div><div class="fb'+(st?' good':'')+'">'+(st?'✅ '+esc(why):'')+'</div></div>';
+}
+function mcqPick(q,o){
+ const id=q.dataset.id,a=+q.dataset.a,i=+o.dataset.i;if(S.ans[id]&&S.ans[id].ok)return;
+ const fb=$('.fb',q);
+ if(i===a){S.ans[id]={ok:true};o.classList.add('ok');$$('.opt',q).forEach(b=>b.disabled=true);fb.textContent='✅ Benar! '+q.dataset.why;fb.className='fb good';if(!q._w)addScore(+q.dataset.pts);save();}
+ else{q._w=true;o.classList.add('bad');o.disabled=true;fb.textContent='❌ Belum tepat — baca lagi dan coba pilihan lain.';fb.className='fb bad';}
+}
+/* ---------- shell ---------- */
+const views={};
+function modHead(n,desc){const m=MODS[n-1];return '<div class="mh"><div><span class="pill">MODUL '+n+' · '+m.min+' MENIT</span><h1>'+m.ic+' '+m.t+'</h1><p class="muted">'+desc+'</p></div><div class="mtimer"><small>Waktu di modul ini (saran '+m.min+' menit)</small><br><b id="mtime">'+fmt(S.spent[n]||0)+' / '+m.min+':00</b><div class="bar"><i id="mbar" style="width:'+Math.min(100,(S.spent[n]||0)/(m.min*60)*100)+'%"></i></div></div></div>';}
+function finBlock(n){return '<div class="fin"><button class="btn primary big" data-fin="'+n+'">'+(n<6?'✔ Selesai Modul '+n+' → Lanjut':'🏁 Selesai & Buat Laporan')+'</button></div>';}
+function go(n){
+ if(n>0&&!S.started){S.started=true;S.startAt=Date.now();}
+ S.mod=n;save();render();window.scrollTo({top:0,behavior:'smooth'});
+}
+function finishMod(n){
+ if(n===6&&!reflOK()){toast('Lengkapi 8 pernyataan skala & 3 refleksi (min. 15 karakter) dulu ya');return;}
+ if(!S.done[n]){S.done[n]=true;addScore(20);burst();}
+ save();if(n<6)go(n+1);else render();
+}
+function renderNav(){
+ const dn=Object.keys(S.done).filter(k=>S.done[k]).length;
+ $('#nav').innerHTML='<button class="nv '+(S.mod===0?'act':'')+'" data-go="0"><span class="ic">🏠</span><span><b>Beranda</b><small>Peta belajar</small></span></button>'+
+ MODS.map(m=>'<button class="nv '+(S.mod===m.n?'act':'')+' '+(S.done[m.n]?'dn':'')+'" data-go="'+m.n+'"><span class="ic">'+(S.done[m.n]?'✔':m.ic)+'</span><span><b>M'+m.n+' · '+m.t+'</b><small>'+m.min+' menit</small></span></button>').join('')+
+ '<div class="navfoot">Progres: <b>'+dn+'/6</b> modul<div class="bar"><i style="width:'+(dn/6*100)+'%"></i></div></div>';
+}
+function render(){renderNav();$('#xp').textContent=S.score;const v=$('#app');v.innerHTML='';views[S.mod](v);tick();}
+document.addEventListener('click',e=>{
+ const g=e.target.closest('[data-go]');if(g){go(+g.dataset.go);return;}
+ const f=e.target.closest('[data-fin]');if(f){finishMod(+f.dataset.fin);return;}
+ const o=e.target.closest('.mcq .opt');if(o){mcqPick(o.closest('.mcq'),o);return;}
+ const l=e.target.closest('[data-lv]');if(l&&!l.disabled){lvShow(+l.dataset.lv);return;}
+});
+
+/* =====================================================================
+   BERANDA
+   ===================================================================== */
+views[0]=v=>{
+ v.innerHTML='<div class="card hero"><i class="fl f1"></i><i class="fl f2"></i><i class="fl f3"></i><i class="fl f4"></i>'+
+ '<span class="pill">PLATFORM BELAJAR MANDIRI · 120 MENIT</span><h1>AlgoQuest</h1>'+
+ '<p style="font-size:1.1rem;max-width:680px;margin:10px auto 18px">Kuasai <b>Pseudocode</b> dan <b>Diagram Alir (Flowchart)</b> — fokus pada <b>Input, Output, dan Percabangan</b> (IF-THEN / IF-THEN-ELSE) lewat teori, studi kasus, lab maya, dan game 5 level.</p>'+
+ '<div class="row" style="justify-content:center"><input id="nm" class="inp" style="max-width:260px;flex:none" placeholder="Nama kamu (opsional)" value="'+attr(S.name)+'"><button class="btn primary big" id="startBtn">'+(S.started?'▶ Lanjutkan Belajar':'🚀 Mulai Belajar (120 Menit)')+'</button></div>'+
+ '<p class="muted" style="margin-top:12px;font-size:.85rem">Pewaktu 120 menit berjalan sejak kamu menekan tombol mulai. Progres tersimpan otomatis di browser.</p></div>'+
+ '<div class="g2"><div class="card hov"><h3>🎯 Tujuan Pembelajaran</h3><ol><li>Mengenali simbol flowchart standar ISO 5807 dan fungsinya.</li><li>Menulis pseudocode untuk <b>input</b> dan <b>output</b>.</li><li>Menyusun alur <b>percabangan</b> IF-THEN dan IF-THEN-ELSE.</li><li>Menelusuri (trace) alur dan menemukan kesalahan logika.</li><li>Merefleksikan pemahaman dan strategi belajar sendiri.</li></ol></div>'+
+ '<div class="card hov"><h3>🧭 Cara Belajar</h3><ul><li>Ikuti modul berurutan (M1 → M6), tetapi boleh melompat.</li><li>Gunakan tombol <b>▶ Jalankan</b> untuk melihat flowchart bergerak.</li><li>Kumpulkan <b>XP</b> dari jawaban benar &amp; misi.</li><li>Salah itu wajar — baca umpan balik, lalu coba lagi.</li><li>Tekan <b>Selesai Modul</b> setelah merasa paham.</li></ul></div></div>'+
+ '<div class="card"><h3>⏱ Alokasi Waktu (120 menit)</h3><div class="alloc">'+MODS.map((m,i)=>'<i style="flex:'+m.min+';background:'+['#06b6d4','#3b82f6','#10b981','#06b6d4','#3b82f6','#10b981'][i]+'">'+m.min+"'</i>").join('')+'</div><small>15 + 20 + 30 + 30 + 15 + 10 = 120 menit</small></div>'+
+ '<div class="g3">'+MODS.map(m=>'<div class="card hov mapcard" data-go="'+m.n+'"><span class="big">'+m.ic+'</span><div><b>Modul '+m.n+' · '+m.t+'</b><br><small>'+m.min+' menit · '+m.d+'</small>'+(S.done[m.n]?'<br><span class="tag then">SELESAI</span>':'')+'</div></div>').join('')+'</div>'+
+ '<div class="card"><div class="rowh"><small>Ingin mengulang dari awal?</small><button class="btn ghost sm" id="resetAll">🗑 Reset semua progres</button></div></div>';
+ $('#nm').oninput=e=>{S.name=e.target.value;save();};
+ $('#startBtn').onclick=()=>go(S.done[1]?(MODS.find(m=>!S.done[m.n])||{n:6}).n:1);
+ $('#resetAll').onclick=()=>{if(confirm('Hapus semua progres dan mulai ulang?')){S=S0();save();render();}};
+};
+
+/* =====================================================================
+   MODUL 1 — DASAR TEORI
+   ===================================================================== */
+const M_SEQ={pre:[{t:'io',text:'INPUT a'},{t:'io',text:'INPUT b'},{t:'proc',text:'jumlah ← a + b'},{t:'io',text:'OUTPUT jumlah'}],branches:[],elseOut:null};
+const M_IFT={pre:[{t:'io',text:'INPUT umur'}],branches:[{cond:'umur >= 17',out:'OUTPUT "Boleh membuat KTP"',test:v=>v.umur>=17}],elseOut:null};
+const M_IFE={pre:[{t:'io',text:'INPUT nilai'}],branches:[{cond:'nilai >= 75',out:'OUTPUT "Lulus"',test:v=>v.nilai>=75}],elseOut:'OUTPUT "Remedial"'};
+views[1]=v=>{
+ v.innerHTML=modHead(1,'Pahami konsep, simbol standar ISO, struktur pseudocode, dan logika percabangan secara interaktif.')+'<div id="t1"></div>'+finBlock(1);
+ mkTabs($('#t1'),[{t:'1 · Konsep',r:th1Konsep},{t:'2 · Simbol ISO',r:th1Simbol},{t:'3 · Pseudocode',r:th1Pseudo},{t:'4 · Percabangan',r:th1Cabang},{t:'5 · Cek Paham',r:th1Cek}]);
+};
+function th1Konsep(el){
+ el.innerHTML='<div class="g2"><div class="card hov"><h3>🧠 Apa itu Algoritma?</h3><p>Algoritma adalah <b>urutan langkah logis dan terbatas</b> untuk menyelesaikan suatu masalah. Contoh sehari-hari: resep membuat teh — ambil gelas, masukkan teh, tuang air panas, aduk, sajikan.</p><div class="callout">Sebelum menulis kode, programmer <b>merancang algoritma</b> terlebih dahulu.</div></div>'+
+ '<div class="card hov"><h3>📜 Pseudocode &amp; 🔷 Flowchart</h3><p><b>Pseudocode</b> = algoritma ditulis dengan bahasa mirip percakapan + kata kunci (INPUT, OUTPUT, IF, THEN…), tidak terikat bahasa pemrograman tertentu.</p><p><b>Flowchart</b> = algoritma digambar dengan simbol standar dan panah alur. Keduanya mudah dibaca manusia, bukan komputer.</p></div></div>'+
+ '<div class="card"><h3>⚙️ Pola Dasar: Input → Proses → Output</h3><div class="ipo"><div class="bx" id="ip1"><b>INPUT</b><br><small>data masuk</small></div><span class="ar">➜</span><div class="bx" id="ip2"><b>PROSES</b><br><small>olah / putuskan</small></div><span class="ar">➜</span><div class="bx" id="ip3"><b>OUTPUT</b><br><small>hasil keluar</small></div></div>'+
+ '<div class="row" style="justify-content:center"><span class="vl"><span>nama</span></span><input id="ipn" class="inp" style="max-width:200px;flex:none" value="Rani"><button class="btn primary" id="ipgo">▶ Coba mesin IPO</button></div><div class="console" id="ipc"><div class="m">Ketik nama lalu jalankan.</div></div></div>'+
+ '<div class="g3"><div class="card hov"><h3>⌨️ INPUT</h3><p>Data yang <b>dimasukkan</b> ke program: dari keyboard, sensor, formulir.</p><code>INPUT nama</code></div><div class="card hov"><h3>🖥 OUTPUT</h3><p>Hasil yang <b>ditampilkan</b> ke pengguna: layar, printer, suara.</p><code>OUTPUT "Halo, " + nama</code></div><div class="card hov"><h3>🔀 PERCABANGAN</h3><p>Program <b>memilih jalur</b> berdasarkan kondisi benar atau salah.</p><code>IF nilai &gt;= 75 THEN …</code></div></div>';
+ $('#ipgo').onclick=()=>{const n=$('#ipn').value.trim()||'Teman',c=$('#ipc');c.innerHTML='';const bx=['#ip1','#ip2','#ip3'].map(s=>$(s));bx.forEach(b=>b.classList.remove('on'));
+  const steps=[()=>log(c,'INPUT nama → "'+n+'"'),()=>log(c,'PROSES: menggabungkan teks "Halo, " + nama','m'),()=>log(c,'OUTPUT: Halo, '+n+'! Selamat belajar algoritma.','g')];
+  steps.forEach((f,i)=>setTimeout(()=>{bx.forEach(b=>b.classList.remove('on'));bx[i].classList.add('on');f();},i*900));};
+}
+function th1Simbol(el){
+ const SY=[['term','Terminator','Awal (START) dan akhir (END) algoritma.','START / END'],['io','Input / Output','Membaca data masuk atau menampilkan hasil.','INPUT x · OUTPUT y'],['proc','Proses','Perhitungan atau pemberian nilai.','jumlah ← a + b'],['dec','Keputusan (Decision)','Menguji kondisi; dua jalur keluar: Ya / Tidak.','IF kondisi THEN'],['flow','Garis Alur (Flowline)','Menunjukkan arah urutan eksekusi.','(urutan baris)'],['conn','Konektor','Menyambung diagram yang terpotong / berpindah halaman.','—']];
+ el.innerHTML='<p>Simbol di bawah mengacu pada standar <b>ISO 5807</b> (simbol dan konvensi dokumentasi untuk diagram alir). Arahkan kursor ke kartu untuk melihat efeknya.</p><div class="g3">'+SY.map(s=>'<div class="card hov symcard">'+symSVG(s[0])+'<h3>'+s[1]+'</h3><p>'+s[2]+'</p><code>'+esc(s[3])+'</code></div>').join('')+'</div>'+
+ '<div class="card"><h3>📏 Aturan Menggambar Flowchart</h3><ul><li>Hanya <b>satu START</b>; diakhiri minimal satu <b>END</b>.</li><li>Alur mengalir dari <b>atas ke bawah</b> (atau kiri ke kanan) dengan panah.</li><li>Simbol keputusan wajib punya <b>dua jalur berlabel</b> (Ya / Tidak).</li><li>Teks di dalam simbol <b>singkat dan jelas</b>.</li><li>Garis alur tidak boleh saling memotong tanpa alasan.</li></ul></div>';
+}
+function th1Pseudo(el){
+ el.innerHTML='<div class="g2"><div class="card"><h3>🔑 Kata Kunci Pseudocode</h3><table><tr><th>Kata kunci</th><th>Fungsi</th></tr><tr><td><code>START / END</code></td><td>Awal / akhir algoritma</td></tr><tr><td><code>INPUT</code></td><td>Membaca data</td></tr><tr><td><code>OUTPUT</code></td><td>Menampilkan data</td></tr><tr><td><code>←</code></td><td>Memberi nilai pada variabel</td></tr><tr><td><code>IF … THEN</code></td><td>Jika kondisi benar</td></tr><tr><td><code>ELSE</code></td><td>Jika kondisi salah</td></tr><tr><td><code>ENDIF</code></td><td>Menutup blok percabangan</td></tr></table></div>'+
+ '<div class="card"><h3>✅ Aturan Penulisan</h3><ol><li>Satu perintah per baris.</li><li>Kata kunci ditulis <b>HURUF KAPITAL</b>.</li><li>Gunakan <b>indentasi</b> di dalam IF/ELSE.</li><li>Nama variabel bermakna: <code>nilai</code>, bukan <code>x</code>.</li><li>Setiap <code>IF</code> harus ditutup <code>ENDIF</code>.</li><li>Teks keluaran ditulis di dalam tanda kutip.</li></ol></div></div>'+
+ '<div class="card"><h3>🔁 Dari Pseudocode ke Kode Nyata (Python)</h3><div class="g2"><div>'+codeHTML(['INPUT nilai','IF nilai >= 75 THEN','   OUTPUT "Lulus"','ELSE','   OUTPUT "Remedial"','ENDIF'])+'</div><div><div class="code">'+['nilai = float(input("Nilai: "))','if nilai >= 75:','    print("Lulus")','else:','    print("Remedial")'].map((l,i)=>'<div class="ln"><span class="no">'+(i+1)+'</span><span>'+esc(l)+'</span></div>').join('')+'</div></div></div><div class="callout ok2">Pseudocode adalah jembatan: logikanya sama, hanya sintaksnya yang berbeda per bahasa.</div></div>';
+}
+function th1Cabang(el){
+ el.innerHTML='<div id="cb"></div><div class="card"><h3>⚖️ Operator Pembanding &amp; Logika</h3><table><tr><th>Operator</th><th>Arti</th><th>Contoh</th></tr><tr><td><code>==</code></td><td>sama dengan</td><td><code>warna == "merah"</code></td></tr><tr><td><code>!=</code></td><td>tidak sama dengan</td><td><code>status != "aktif"</code></td></tr><tr><td><code>&gt; &lt;</code></td><td>lebih besar / kecil</td><td><code>suhu &gt; 30</code></td></tr><tr><td><code>&gt;= &lt;=</code></td><td>lebih besar / kecil atau sama</td><td><code>nilai &gt;= 75</code></td></tr><tr><td><code>AND OR NOT</code></td><td>menggabungkan kondisi</td><td><code>umur &gt;= 17 AND punyaKTP</code></td></tr></table></div>';
+ mkTabs($('#cb'),[
+  {t:'Urutan (tanpa cabang)',r:b=>{b.innerHTML='<div class="callout">Semua langkah dijalankan <b>berurutan</b> dari atas ke bawah. Tidak ada keputusan.</div><div id="d1"></div>';createDemo($('#d1',b),{model:M_SEQ,vars:[{name:'a',type:'number',value:5},{name:'b',type:'number',value:3}],say:(id,v)=>id==='p2'?'jumlah = '+(v.a+v.b):id==='p3'?'OUTPUT: '+(v.a+v.b):undefined});}},
+  {t:'IF-THEN',r:b=>{b.innerHTML='<div class="callout"><b>Percabangan tunggal:</b> blok THEN dijalankan <b>hanya jika</b> kondisi benar. Jika salah, program melewati blok dan lanjut ke END. Coba umur 17 lalu 15!</div><div id="d2"></div>';createDemo($('#d2',b),{model:M_IFT,vars:[{name:'umur',type:'number',value:17}]});}},
+  {t:'IF-THEN-ELSE',r:b=>{b.innerHTML='<div class="callout"><b>Percabangan ganda:</b> ada <b>dua jalur</b> — satu untuk kondisi benar (THEN), satu untuk kondisi salah (ELSE). Pasti salah satunya dijalankan. Coba nilai 75 lalu 74!</div><div id="d3"></div>';createDemo($('#d3',b),{model:M_IFE,vars:[{name:'nilai',type:'number',value:80}]});}}]);
+}
+function th1Cek(el){
+ el.innerHTML='<div class="card"><h3>🧩 Cek Pemahaman Cepat (+5 XP/soal)</h3>'+
+ mcq('t1','Simbol belah ketupat (diamond) pada flowchart digunakan untuk…',['Menandai awal program','Menampilkan output','Mengambil keputusan (Ya/Tidak)','Menjalankan perhitungan'],2,'Diamond = Decision, punya dua jalur Ya/Tidak.')+
+ mcq('t2','Perintah pseudocode untuk membaca data dari pengguna adalah…',['OUTPUT','INPUT','ENDIF','THEN'],1,'INPUT membaca data; OUTPUT menampilkan data.')+
+ mcq('t3','Pada IF-THEN (tanpa ELSE), apa yang terjadi jika kondisi SALAH?',['Program error','Blok THEN dilewati dan program lanjut','Blok THEN tetap dijalankan','Program kembali ke START'],1,'Blok THEN dilewati; eksekusi lanjut setelah ENDIF.')+
+ mcq('t4','Perbedaan utama IF-THEN-ELSE dibanding IF-THEN adalah…',['Tidak memerlukan kondisi','Hanya untuk teks','Memiliki jalur untuk kondisi benar dan kondisi salah','Tidak memerlukan END'],2,'ELSE menangani jalur ketika kondisi bernilai salah.')+'</div>';
+}
+
+/* =====================================================================
+   MODUL 2 — STUDI KASUS
+   ===================================================================== */
+const CASES=[
+ {ic:'🎓',t:'Sistem Penilaian Siswa',tag:'IF-THEN-ELSE bertingkat',story:'SMA Nusantara ingin sistem yang otomatis menentukan predikat sesuai nilai akhir: nilai ≥ 85 "Sangat Baik", nilai ≥ 70 "Baik", dan di bawahnya "Perlu Bimbingan".',inp:'nilai (angka 0–100)',proc:'Bandingkan nilai dengan 85, lalu dengan 70',outp:'Predikat siswa',
+  model:{pre:[{t:'io',text:'INPUT nilai'}],branches:[{cond:'nilai >= 85',out:'OUTPUT "Sangat Baik"',test:v=>v.nilai>=85},{cond:'nilai >= 70',out:'OUTPUT "Baik"',test:v=>v.nilai>=70}],elseOut:'OUTPUT "Perlu Bimbingan"'},
+  vars:[{name:'nilai',type:'number',value:78}],
+  qs:[['Jika nilai = 85, predikat yang dihasilkan adalah…',['Baik','Sangat Baik','Perlu Bimbingan','Tidak ada'],1,'Kondisi nilai >= 85 bernilai benar untuk 85 (tanda >= mencakup sama dengan).'],['Mengapa kondisi "nilai >= 85" harus dicek lebih dulu daripada "nilai >= 70"?',['Agar kode lebih pendek','Karena nilai 90 juga memenuhi >= 70, sehingga akan salah dinilai Baik jika urutan dibalik','Tidak ada alasan khusus','Agar ELSE tidak dipakai'],1,'Pada percabangan bertingkat, kondisi paling spesifik/ketat dicek lebih dahulu.']]},
+ {ic:'🚦',t:'Lampu Lalu Lintas',tag:'Percabangan banyak jalur',story:'Sebuah sensor kendaraan otonom membaca warna lampu lalu lintas. Merah → BERHENTI, kuning → HATI-HATI, hijau → JALAN. Warna lain dianggap lampu rusak.',inp:'warna (teks)',proc:'Cocokkan warna dengan "merah", "kuning", "hijau"',outp:'Instruksi untuk kendaraan',
+  model:{pre:[{t:'io',text:'INPUT warna'}],branches:[{cond:'warna == "merah"',out:'OUTPUT "BERHENTI"',test:v=>v.warna==='merah'},{cond:'warna == "kuning"',out:'OUTPUT "HATI-HATI"',test:v=>v.warna==='kuning'},{cond:'warna == "hijau"',out:'OUTPUT "JALAN"',test:v=>v.warna==='hijau'}],elseOut:'OUTPUT "Lampu rusak"'},
+  vars:[{name:'warna',type:'text',value:'merah',options:['merah','kuning','hijau','biru']}],
+  qs:[['Ada berapa simbol keputusan (diamond) pada flowchart lampu lalu lintas ini?',['1','2','3','4'],2,'Ada tiga pengujian warna: merah, kuning, hijau.'],['Jika warna = "biru", jalur mana yang dilalui?',['Cabang merah','Cabang hijau','Jalur ELSE → "Lampu rusak"','Program berhenti error'],2,'Semua kondisi bernilai salah, sehingga jalur ELSE yang dijalankan.']]},
+ {ic:'🛒',t:'Diskon Pembelian',tag:'Kondisi berjenjang',story:'Toko memberi diskon: belanja ≥ Rp500.000 diskon 20%, belanja ≥ Rp200.000 diskon 10%, selain itu tidak ada diskon.',inp:'total (rupiah)',proc:'Bandingkan total dengan 500000, lalu 200000',outp:'Besar diskon',
+  model:{pre:[{t:'io',text:'INPUT total'}],branches:[{cond:'total >= 500000',out:'OUTPUT "Diskon 20%"',test:v=>v.total>=500000},{cond:'total >= 200000',out:'OUTPUT "Diskon 10%"',test:v=>v.total>=200000}],elseOut:'OUTPUT "Tanpa diskon"'},
+  vars:[{name:'total',type:'number',value:250000}],
+  qs:[['Total belanja Rp499.999. Diskon yang diperoleh?',['20%','10%','Tanpa diskon','30%'],1,'499999 < 500000 sehingga cabang pertama salah; 499999 >= 200000 → diskon 10%.'],['Toko menambah aturan "≥ 1.000.000 diskon 30%". Di mana kondisi baru diletakkan?',['Paling bawah','Di tengah','Paling atas, sebelum total >= 500000','Di dalam ELSE'],2,'Kondisi yang paling ketat harus diperiksa pertama agar tidak "tertangkap" kondisi longgar.'],['Berapa banyak kemungkinan keluaran program diskon ini?',['1','2','3','4'],2,'Diskon 20%, diskon 10%, dan tanpa diskon.']]}];
+views[2]=v=>{
+ v.innerHTML=modHead(2,'Analisis tiga skenario dunia nyata: bedah Input–Proses–Output, jalankan flowchart, lalu jawab pertanyaan analisis.')+'<div class="g3" id="cs"></div><div id="cbody"></div>'+finBlock(2);
+ const draw=i=>{S.cs=i;save();$('#cs').innerHTML=CASES.map((c,j)=>'<button class="card hov casebtn '+(i===j?'act':'')+'" data-c="'+j+'"><span class="big">'+c.ic+'</span><b>'+c.t+'</b><small>'+c.tag+'</small></button>').join('');caseBody(i);};
+ $('#cs').onclick=e=>{const b=e.target.closest('[data-c]');if(b)draw(+b.dataset.c);};
+ draw(S.cs||0);
+};
+function caseBody(i){
+ const c=CASES[i];
+ mkTabs($('#cbody'),[
+  {t:'① Skenario & IPO',r:b=>{b.innerHTML='<div class="card"><h3>'+c.ic+' '+c.t+'</h3><p>'+c.story+'</p></div><div class="g3"><div class="card hov"><h3>⌨️ Input</h3><p>'+c.inp+'</p></div><div class="card hov"><h3>⚙️ Proses / Kondisi</h3><p>'+c.proc+'</p></div><div class="card hov"><h3>🖥 Output</h3><p>'+c.outp+'</p></div></div>';}},
+  {t:'② Pseudocode & Flowchart',r:b=>{b.innerHTML='<div class="callout">Ubah nilai input, tekan <b>▶ Jalankan</b>, lalu amati baris pseudocode yang menyala, simbol flowchart yang bergerak, dan keluaran di konsol.</div><div id="cd"></div>';createDemo($('#cd',b),{model:c.model,vars:c.vars});}},
+  {t:'③ Analisis',r:b=>{b.innerHTML='<div class="card"><h3>🔎 Pertanyaan Analisis (+5 XP/soal)</h3>'+c.qs.map((q,j)=>mcq('c'+i+'q'+j,q[0],q[1],q[2],q[3])).join('')+'</div>';}}]);
+}
+
+/* =====================================================================
+   MODUL 3 — LAB MAYA
+   ===================================================================== */
+const OPS=['>=','>','<=','<','==','!='];
+const PN={lulus:'Lulus / Remedial',usia:'Cek Usia (IF-THEN)',lampu:'Lampu Lalu Lintas',diskon:'Diskon Belanja',kosong:'Mulai dari dasar'};
+const PRESETS={
+ lulus:{vars:[{n:'nilai',t:'number',v:'80'}],br:[{vi:0,op:'>=',val:'75',out:'LULUS'}],el:true,eo:'REMEDIAL'},
+ usia:{vars:[{n:'umur',t:'number',v:'17'}],br:[{vi:0,op:'>=',val:'17',out:'Boleh membuat KTP'}],el:false,eo:''},
+ lampu:{vars:[{n:'warna',t:'text',v:'merah'}],br:[{vi:0,op:'==',val:'merah',out:'BERHENTI'},{vi:0,op:'==',val:'kuning',out:'HATI-HATI'}],el:true,eo:'JALAN'},
+ diskon:{vars:[{n:'total',t:'number',v:'300000'}],br:[{vi:0,op:'>=',val:'500000',out:'Diskon 20%'},{vi:0,op:'>=',val:'200000',out:'Diskon 10%'}],el:true,eo:'Tanpa diskon'},
+ kosong:{vars:[{n:'x',t:'number',v:'10'}],br:[{vi:0,op:'>',val:'0',out:'Positif'}],el:true,eo:'Nol atau negatif'}};
+const MISI=[
+ {t:'Misi 1 — Lulus atau Remedial',d:'Buat program dengan variabel <code>nilai</code> (angka). Cetak <b>LULUS</b> jika nilai ≥ 75, selain itu <b>REMEDIAL</b>.',tests:[[80,'LULUS'],[75,'LULUS'],[74,'REMEDIAL'],[0,'REMEDIAL']]},
+ {t:'Misi 2 — Tiket Masuk',d:'Variabel <code>umur</code> (angka). Umur &lt; 5 → <b>GRATIS</b>; umur ≤ 12 → <b>ANAK</b>; selain itu → <b>DEWASA</b>. (Butuh ELSE IF!)',tests:[[3,'GRATIS'],[4,'GRATIS'],[5,'ANAK'],[12,'ANAK'],[13,'DEWASA'],[40,'DEWASA']]},
+ {t:'Misi 3 — Predikat 4 Tingkat',d:'Variabel <code>nilai</code> (angka): ≥ 90 → <b>A</b>, ≥ 80 → <b>B</b>, ≥ 70 → <b>C</b>, selain itu <b>D</b>. Perhatikan urutan kondisi!',tests:[[95,'A'],[90,'A'],[85,'B'],[80,'B'],[75,'C'],[70,'C'],[60,'D']]}];
+let LS=null,LABPS=null;
+function evalCond(L,b,vals){
+ const x=L.vars[b.vi];if(!x)return false;let a=vals[b.vi],r=b.val;
+ if(x.t==='number'){a=parseFloat(a);r=parseFloat(r);if(isNaN(a)||isNaN(r))return false;}
+ else{a=String(a).trim().toLowerCase();r=String(r).trim().toLowerCase();}
+ switch(b.op){case'>':return a>r;case'>=':return a>=r;case'<':return a<r;case'<=':return a<=r;case'==':return a===r;case'!=':return a!==r;}return false;
+}
+function interp(t,vals,L){return String(t).replace(/\{(\w+)\}/g,(m,n)=>{const i=L.vars.findIndex(x=>x.n===n);return i>=0?vals[i]:m;});}
+function runProg(L,inArr){
+ const vals=L.vars.map((x,i)=>x.t==='number'?parseFloat(inArr[i]):String(inArr[i]===undefined?'':inArr[i]));
+ for(let j=0;j<L.br.length;j++)if(evalCond(L,L.br[j],vals))return interp(L.br[j].out,vals,L);
+ return L.el?interp(L.eo,vals,L):'';
+}
+function labModel(){
+ const L=S.lab;
+ return{pre:L.vars.map(x=>({t:'io',text:'INPUT '+(x.n||'?')})),
+  branches:L.br.map(b=>{const x=L.vars[b.vi]||L.vars[0];return{cond:(x.n||'?')+' '+b.op+' '+(x.t==='text'?'"'+b.val+'"':(b.val===''?'?':b.val)),out:'OUTPUT "'+b.out+'"'};}),
+  elseOut:L.el?'OUTPUT "'+L.eo+'"':null};
+}
+function labCheck(){
+ const L=S.lab,w=[],seen={};
+ L.vars.forEach(x=>{
+  if(!/^[A-Za-z_][A-Za-z0-9_]*$/.test(x.n||''))w.push('Nama variabel "'+(x.n||'(kosong)')+'" tidak valid (huruf/angka/_, tidak diawali angka).');
+  else if(seen[x.n.toLowerCase()])w.push('Nama variabel "'+x.n+'" kembar.');
+  seen[(x.n||'').toLowerCase()]=1;
+  if(x.t==='number'&&(x.v===''||isNaN(parseFloat(x.v))))w.push('Nilai uji untuk '+(x.n||'variabel')+' harus berupa angka.');
+ });
+ L.br.forEach((b,j)=>{const x=L.vars[b.vi];
+  if(String(b.val).trim()==='')w.push('Kondisi #'+(j+1)+': nilai pembanding kosong.');
+  else if(x&&x.t==='number'&&isNaN(parseFloat(b.val)))w.push('Kondisi #'+(j+1)+': variabel angka dibandingkan dengan teks.');
+  if(String(b.out).trim()==='')w.push('Kondisi #'+(j+1)+': teks OUTPUT kosong.');});
+ if(L.el&&String(L.eo).trim()==='')w.push('Teks OUTPUT pada ELSE kosong.');
+ return w;
+}
+function labPlan(){
+ const L=S.lab,vals=L.vars.map(x=>x.t==='number'?parseFloat(x.v):String(x.v));let k=-1;
+ for(let j=0;j<L.br.length;j++)if(evalCond(L,L.br[j],vals)){k=j;break;}
+ return{ids:pathFor(labModel(),k),k,vals};
+}
+function labSay(id,p){
+ const L=S.lab,i=+id.slice(1);
+ if(id==='start')return{t:'▶ START',c:'m'};
+ if(id[0]==='p')return{t:'INPUT '+L.vars[i].n+' → '+p.vals[i]};
+ if(id[0]==='d'){const b=L.br[i],m=labModel();return{t:'Cek: '+m.branches[i].cond+' → '+(i===p.k?'BENAR ✔':'SALAH ✘')};}
+ if(id[0]==='o')return{t:'OUTPUT: '+interp(L.br[i].out,p.vals,L),c:'g'};
+ if(id==='e')return{t:'OUTPUT: '+interp(L.eo,p.vals,L),c:'g'};
+ return{t:'■ END — program selesai',c:'m'};
+}
+function labApply(id,p){
+ markLine($('#labCode'),LABPS.map[id]);const s=labSay(id,p);if(s)log($('#labCon'),s.t,s.c);
+ if(id[0]==='p'){const n=+id.slice(1)+1;$('#labMon').innerHTML=S.lab.vars.slice(0,n).map((x,i)=>'<span class="var">'+esc(x.n)+' = <b>'+esc(p.vals[i])+'</b></span>').join('');}
+}
+function labReset(){LS=null;const f=$('#labFlow');f._tok=(f._tok||0)+1;clearFlow(f);markLine($('#labCode'));$('#labCon').innerHTML='<div class="m">Konsol kosong. Jalankan atau langkahi algoritmamu.</div>';$('#labMon').innerHTML='';}
+function labRun(){
+ const w=labCheck();if(w.length){toast('⚠ '+w[0]);return;}
+ const p=labPlan();LS=null;$('#labCon').innerHTML='';$('#labMon').innerHTML='';
+ playPath($('#labFlow'),p.ids,{delay:750,onStep:id=>labApply(id,p)});
+}
+function labStepBtn(){
+ const w=labCheck();if(w.length){toast('⚠ '+w[0]);return;}
+ const f=$('#labFlow');
+ if(!LS||LS.i>=LS.p.ids.length){f._tok=(f._tok||0)+1;clearFlow(f);$('#labCon').innerHTML='';$('#labMon').innerHTML='';LS={p:labPlan(),i:0};}
+ showStep(f,LS.p.ids,LS.i);labApply(LS.p.ids[LS.i],LS.p);LS.i++;
+ if(LS.i>=LS.p.ids.length)toast('Eksekusi selesai — tekan Langkah lagi untuk mengulang');
+}
+function labPreview(){
+ const m=labModel(),ps=genPseudo(m);LABPS=ps;
+ $('#labCode').innerHTML=codeHTML(ps.lines);$('#labFlow').innerHTML=flowHTML(buildFlow(m));
+ const w=labCheck(),e=$('#labWarn');if(e)e.innerHTML=w.length?w.map(x=>'<div class="warn">⚠ '+esc(x)+'</div>').join(''):'<div class="okmsg">✔ Algoritma valid — siap dijalankan</div>';
+}
+function labForm(){
+ const L=S.lab,f=$('#labForm');
+ f.innerHTML='<div class="rowh"><h3>🧩 Susun Algoritma</h3><div><select class="inp" id="lpre">'+Object.keys(PN).map(k=>'<option value="'+k+'">'+PN[k]+'</option>').join('')+'</select> <button class="btn ghost sm" data-a="load">Muat</button></div></div>'+
+ '<h4>① INPUT — variabel &amp; nilai uji</h4>'+L.vars.map((x,i)=>'<div class="row" data-vi="'+i+'"><span class="tag in">INPUT</span><input class="inp vn" value="'+attr(x.n)+'" placeholder="nama"><select class="inp vt"><option value="number"'+(x.t==='number'?' selected':'')+'>angka</option><option value="text"'+(x.t==='text'?' selected':'')+'>teks</option></select><input class="inp vv" value="'+attr(x.v)+'" placeholder="nilai uji"><button class="x" data-a="dv" title="Hapus">✕</button></div>').join('')+(L.vars.length<3?'<button class="btn ghost sm" data-a="av">＋ Variabel</button>':'')+
+ '<h4>② PERCABANGAN — kondisi &amp; OUTPUT</h4>'+L.br.map((b,j)=>'<div class="row" data-bi="'+j+'"><span class="tag if">'+(j?'ELSE IF':'IF')+'</span><select class="inp bv">'+L.vars.map((x,i)=>'<option value="'+i+'"'+(b.vi===i?' selected':'')+'>'+esc(x.n||'?')+'</option>').join('')+'</select><select class="inp bo">'+OPS.map(o=>'<option'+(b.op===o?' selected':'')+'>'+esc(o)+'</option>').join('')+'</select><input class="inp bval" value="'+attr(b.val)+'" placeholder="nilai"><span class="tag then">THEN OUTPUT</span><input class="inp bout" value="'+attr(b.out)+'" placeholder="teks"><button class="x" data-a="db" title="Hapus">✕</button></div>').join('')+
+ (L.br.length<4?'<button class="btn ghost sm" data-a="ab">＋ ELSE IF</button>':'')+
+ '<div class="row" style="margin-top:10px"><label><input type="checkbox" id="uel"'+(L.el?' checked':'')+'> <span class="tag if">ELSE</span></label>'+(L.el?'<span class="tag then">OUTPUT</span><input class="inp" id="eout" value="'+attr(L.eo)+'" placeholder="teks jika semua kondisi salah">':'')+'</div>'+
+ '<small>Tips: tulis <code>{nama_variabel}</code> di teks OUTPUT untuk menampilkan nilainya.</small><div id="labWarn" style="margin-top:8px"></div>'+
+ '<div class="btns"><button class="btn primary" data-a="run">▶ Jalankan</button><button class="btn" data-a="step">⏭ Langkah</button><button class="btn ghost" data-a="reset">⟲ Reset</button></div>';
+}
+function labMissions(){
+ $('#miss').innerHTML='<h3>🎯 Misi Lab (+30 XP/misi)</h3><p class="muted">Susun algoritma di workbench, lalu tekan "Periksa". Program diuji dengan beberapa nilai tersembunyi.</p><div class="g3">'+MISI.map((m,i)=>'<div class="card" style="margin:0" data-m="'+i+'"><b>'+m.t+(S.miss[i]?' ✅':'')+'</b><p style="margin-top:6px;font-size:.9rem">'+m.d+'</p><button class="btn primary sm" data-chk="'+i+'">Periksa Misi</button><div class="mres" style="margin-top:8px;font-size:.84rem"></div></div>').join('')+'</div>';
+}
+function missionCheck(i){
+ const L=S.lab,m=MISI[i],box=$('[data-m="'+i+'"] .mres');
+ if(labCheck().length){box.innerHTML='<span class="warn">Perbaiki dulu peringatan di workbench.</span>';return;}
+ if(L.vars[0].t!=='number'){box.innerHTML='<span class="warn">Variabel pertama harus bertipe angka.</span>';return;}
+ let ok=0,rows='';
+ m.tests.forEach(t=>{const r=runProg(L,[t[0]]);const pass=String(r).trim().toLowerCase()===t[1].toLowerCase();if(pass)ok++;rows+='<div>'+(pass?'✔':'✘')+' input '+t[0]+' → '+esc(r||'(tidak ada keluaran)')+(pass?'':' <span class="muted">(seharusnya '+t[1]+')</span>')+'</div>';});
+ box.innerHTML=rows;
+ if(ok===m.tests.length){if(!S.miss[i]){S.miss[i]=true;addScore(30);burst();}box.innerHTML+='<div class="okmsg">🎉 Misi berhasil!</div>';}
+}
+views[3]=v=>{
+ v.innerHTML=modHead(3,'Rancang algoritma sendiri, lihat pseudocode &amp; flowchart terbentuk otomatis, lalu jalankan dan amati alur logikanya.')+
+ '<div class="lab"><div class="card" id="labForm"></div><div class="labR"><div class="card"><h3>📜 Pseudocode (otomatis)</h3><div id="labCode"></div></div><div class="card"><h3>🔷 Flowchart (otomatis)</h3><div id="labFlow" class="flowbox"></div></div><div class="card"><h3>🖥 Konsol &amp; Monitor Variabel</h3><div id="labMon" class="mon"></div><div id="labCon" class="console"><div class="m">Konsol kosong.</div></div></div></div></div><div class="card" id="miss"></div>'+finBlock(3);
+ if(!S.lab)S.lab=JSON.parse(JSON.stringify(PRESETS.lulus));
+ LS=null;labForm();labPreview();labMissions();
+ const f=$('#labForm');
+ f.oninput=e=>{const t=e.target,r=t.closest('[data-vi]'),b=t.closest('[data-bi]');
+  if(r){const x=S.lab.vars[+r.dataset.vi];if(t.classList.contains('vn'))x.n=t.value.trim();if(t.classList.contains('vv'))x.v=t.value;}
+  if(b){const x=S.lab.br[+b.dataset.bi];if(t.classList.contains('bval'))x.val=t.value;if(t.classList.contains('bout'))x.out=t.value;}
+  if(t.id==='eout')S.lab.eo=t.value;
+  labPreview();save();};
+ f.onchange=e=>{const t=e.target,r=t.closest('[data-vi]'),b=t.closest('[data-bi]');
+  if(r&&t.classList.contains('vt')){S.lab.vars[+r.dataset.vi].t=t.value;}
+  else if(b&&t.classList.contains('bv')){S.lab.br[+b.dataset.bi].vi=+t.value;}
+  else if(b&&t.classList.contains('bo')){S.lab.br[+b.dataset.bi].op=t.value;}
+  else if(t.id==='uel'){S.lab.el=t.checked;if(t.checked&&!S.lab.eo)S.lab.eo='Lainnya';}
+  else if(!(r&&t.classList.contains('vn')))return;
+  labForm();labPreview();save();};
+ f.onclick=e=>{const a=e.target.closest('[data-a]');if(!a)return;const act=a.dataset.a,L=S.lab;
+  if(act==='run')return labRun();if(act==='step')return labStepBtn();if(act==='reset')return labReset();
+  if(act==='load'){S.lab=JSON.parse(JSON.stringify(PRESETS[$('#lpre').value]));labForm();labPreview();labReset();save();return;}
+  if(act==='av'){L.vars.push({n:'var'+(L.vars.length+1),t:'number',v:'0'});}
+  else if(act==='dv'){if(L.vars.length<2){toast('Minimal 1 variabel INPUT');return;}const i=+a.closest('[data-vi]').dataset.vi;L.vars.splice(i,1);L.br.forEach(b=>{if(b.vi===i)b.vi=0;else if(b.vi>i)b.vi--;});}
+  else if(act==='ab'){L.br.push({vi:0,op:'>=',val:'0',out:'Hasil baru'});}
+  else if(act==='db'){if(L.br.length<2){toast('Minimal 1 kondisi IF');return;}L.br.splice(+a.closest('[data-bi]').dataset.bi,1);}
+  labForm();labPreview();save();};
+ $('#miss').onclick=e=>{const b=e.target.closest('[data-chk]');if(b)missionCheck(+b.dataset.chk);};
+};
+
+/* =====================================================================
+   MODUL 4 — GAME 5 LEVEL
+   ===================================================================== */
+const LVT=['Input & Output','IF-THEN','IF-THEN-ELSE','Bug Hunter','Tantangan'];
+const LVD=['Cocokkan simbol flowchart dengan fungsinya, lalu bedakan perintah INPUT dan OUTPUT.','Telusuri alur: klik simbol yang dilewati program secara berurutan untuk nilai input tertentu.','Lengkapi bagian logika yang hilang pada pseudocode IF-THEN-ELSE.','Temukan baris yang salah (bug), lalu pilih perbaikan yang tepat.','Selesaikan studi kasus lengkap: susun pseudocode, lalu prediksi hasilnya.'];
+views[4]=v=>{
+ v.innerHTML=modHead(4,'Selesaikan 5 level berurutan. Jawaban benar di percobaan pertama memberi XP penuh.')+'<div class="card gbar"><div class="lvnav" id="lvnav"></div><div class="gscore">Skor game: <b id="gs">'+(S.gs||0)+'</b> XP</div></div><div id="lvbody"></div>'+finBlock(4);
+ lvShow(S.game.cur||1);
+};
+function lvNav(){$('#lvnav').innerHTML=[1,2,3,4,5].map(n=>{const lock=n>1&&!S.game.done[n-1];return '<button class="lvb '+(S.game.cur===n?'act':'')+' '+(S.game.done[n]?'dn':'')+'" data-lv="'+n+'"'+(lock?' disabled':'')+'>'+(S.game.done[n]?'✔':lock?'🔒':n)+'<small>'+LVT[n-1]+'</small></button>';}).join('');}
+function lvShow(n){
+ S.game.cur=n;save();lvNav();
+ $('#lvbody').innerHTML='<div class="card"><span class="pill">LEVEL '+n+' / 5</span><h2>'+LVT[n-1]+'</h2><p class="muted">'+LVD[n-1]+'</p></div><div id="lvc"></div>';
+ [lv1,lv2,lv3,lv4,lv5][n-1]($('#lvc'));
+}
+function lvDone(n){
+ if(!S.game.done[n]){S.game.done[n]=true;addScore(25,'g');burst();}
+ lvNav();const c=$('#lvc'),d=document.createElement('div');d.className='fin';
+ d.innerHTML=n<5?'<button class="btn good big" data-lv="'+(n+1)+'">🎉 Level '+n+' selesai! Lanjut ke Level '+(n+1)+' →</button>':'<div class="card hero" style="width:100%;padding:26px"><h2>🏆 Semua level selesai!</h2><p>Total skor game: <b>'+(S.gs||0)+' XP</b>. Kamu sudah menguasai input, output, dan percabangan. Lanjutkan ke LKPD.</p></div>';
+ c.appendChild(d);d.scrollIntoView({behavior:'smooth',block:'center'});
+}
+/* Level 1 */
+function lv1(el){
+ const SY=[['term','Menandai START atau END'],['io','Membaca (INPUT) atau menampilkan (OUTPUT) data'],['proc','Menjalankan perhitungan / pemberian nilai'],['dec','Mengajukan pertanyaan Ya/Tidak (percabangan)'],['flow','Menunjukkan arah urutan eksekusi'],['conn','Menyambung bagian diagram yang terpisah']];
+ const ST=[['Membaca nilai ujian dari keyboard','INPUT'],['Menampilkan hasil akhir ke layar','OUTPUT'],['Meminta pengguna mengetik namanya','INPUT'],['Mencetak pesan "Selamat datang"','OUTPUT'],['Membaca suhu dari sensor','INPUT'],['Menampilkan pesan kesalahan','OUTPUT']];
+ let selL=null,selR=null,solved=0,wrong={},bDone=0,bWrong={};
+ el.innerHTML='<div class="card"><h3>Bagian A — Cocokkan simbol dengan fungsinya</h3><p class="muted">Klik satu simbol di kiri, lalu klik fungsinya di kanan.</p><div class="pairs"><div class="pcol" id="pl">'+SY.map(s=>'<button class="pr" data-k="'+s[0]+'">'+symSVG(s[0])+'</button>').join('')+'</div><div class="pcol" id="pr">'+shuf(SY).map(s=>'<button class="pr" data-k="'+s[0]+'">'+s[1]+'</button>').join('')+'</div></div></div>'+
+ '<div class="card" id="l1b" hidden><h3>Bagian B — INPUT atau OUTPUT?</h3>'+ST.map((s,i)=>'<div class="stm" data-i="'+i+'"><span>'+s[0]+'</span><span><button class="btn sm" data-v="INPUT">INPUT</button> <button class="btn sm" data-v="OUTPUT">OUTPUT</button></span></div>').join('')+'</div>';
+ const clearSel=()=>{$$('.pr.pick',el).forEach(b=>b.classList.remove('pick'));selL=selR=null;};
+ const clickPair=(b,side)=>{
+  if(b.classList.contains('solved'))return;
+  $$('.pr.pick',$(side==='L'?'#pl':'#pr',el)).forEach(x=>x.classList.remove('pick'));b.classList.add('pick');
+  if(side==='L')selL=b;else selR=b;
+  if(selL&&selR){const k=selL.dataset.k;
+   if(k===selR.dataset.k){selL.classList.remove('pick');selR.classList.remove('pick');selL.classList.add('solved');selR.classList.add('solved');addScore(wrong[k]?5:10,'g');solved++;selL=selR=null;if(solved===6){$('#l1b',el).hidden=false;toast('Bagian A selesai! Lanjut Bagian B');}}
+   else{wrong[k]=1;const a=selL,c=selR;a.classList.add('wrong');c.classList.add('wrong');setTimeout(()=>{a.classList.remove('wrong','pick');c.classList.remove('wrong','pick');},500);selL=selR=null;}}
+ };
+ $('#pl',el).onclick=e=>{const b=e.target.closest('.pr');if(b)clickPair(b,'L');};
+ $('#pr',el).onclick=e=>{const b=e.target.closest('.pr');if(b)clickPair(b,'R');};
+ $('#l1b',el).onclick=e=>{const b=e.target.closest('[data-v]');if(!b)return;const row=b.closest('.stm'),i=+row.dataset.i;if(row.classList.contains('ok'))return;
+  if(b.dataset.v===ST[i][1]){row.classList.add('ok');row.innerHTML='<span>✔ '+ST[i][0]+' → <b>'+ST[i][1]+'</b></span>';addScore(bWrong[i]?2:5,'g');if(++bDone===ST.length)lvDone(1);}
+  else{bWrong[i]=1;row.classList.add('wrong');setTimeout(()=>row.classList.remove('wrong'),450);}};
+}
+/* Level 2 */
+function lv2(el){
+ const IFU={pre:[{t:'io',text:'INPUT umur'}],branches:[{cond:'umur >= 17',out:'OUTPUT "Boleh membuat KTP"'}],elseOut:null};
+ const Q=[{m:IFU,tx:'umur = 20',k:0},{m:IFU,tx:'umur = 15',k:-1},
+  {m:{pre:[{t:'io',text:'INPUT suhu'}],branches:[{cond:'suhu > 30',out:'OUTPUT "Kipas ON"'}],elseOut:null},tx:'suhu = 30',k:-1},
+  {m:{pre:[{t:'io',text:'INPUT saldo'},{t:'io',text:'INPUT harga'}],branches:[{cond:'saldo >= harga',out:'OUTPUT "Beli berhasil"'}],elseOut:null},tx:'saldo = 5000 dan harga = 5000',k:0}];
+ let qi=0;
+ const draw=()=>{
+  const q=Q[qi];let sel=[],tries=0,solved=false;const exp=pathFor(q.m,q.k);
+  el.innerHTML='<div class="card"><span class="pill">SOAL '+(qi+1)+' / '+Q.length+'</span><p style="font-size:1.05rem">Jika <b>'+q.tx+'</b>, klik simbol-simbol yang dilalui program <b>secara berurutan</b>, mulai dari START sampai END.</p><div class="flowbox clk" id="l2f"></div><div class="chips" id="l2c"><span class="muted">Urutan pilihanmu akan muncul di sini…</span></div><div class="btns"><button class="btn" id="l2u">↶ Hapus terakhir</button><button class="btn ghost" id="l2r">⟲ Ulangi</button><button class="btn primary" id="l2k">✔ Periksa</button><button class="btn ghost" id="l2s" hidden>👁 Lihat jawaban</button></div><div class="fb" id="l2m"></div></div>';
+  const sp=buildFlow(q.m),fb=$('#l2f',el);fb.innerHTML=flowHTML(sp);
+  const name=id=>sp.nodes.find(n=>n.id===id).text.replace(/\n/g,' ');
+  const upd=()=>{$('#l2c',el).innerHTML=sel.length?sel.map((id,i)=>'<span class="chp">'+(i+1)+'. '+esc(name(id))+'</span>').join(''):'<span class="muted">Urutan pilihanmu akan muncul di sini…</span>';$$('.fnode',fb).forEach(n=>n.classList.toggle('sel',sel.includes(n.dataset.id)));};
+  fb.onclick=e=>{if(solved)return;const g=e.target.closest('.fnode');if(!g||sel.includes(g.dataset.id))return;sel.push(g.dataset.id);upd();};
+  $('#l2u',el).onclick=()=>{if(!solved){sel.pop();upd();}};
+  $('#l2r',el).onclick=()=>{if(!solved){sel=[];upd();}};
+  const win=pts=>{solved=true;clearFlow(fb);playPath(fb,exp,{delay:450});const m=$('#l2m',el);m.className='fb good';m.textContent='✅ Tepat! Lihat animasi alur yang benar.';if(pts)addScore(pts,'g');
+   const d=document.createElement('div');d.className='btns';if(qi<Q.length-1){d.innerHTML='<button class="btn good" id="l2n">Soal berikutnya →</button>';$('.card',el).appendChild(d);$('#l2n',el).onclick=()=>{qi++;draw();};}else{lvDone(2);}};
+  $('#l2k',el).onclick=()=>{if(solved)return;if(!sel.length){toast('Klik simbol dulu');return;}
+   if(sel.join()===exp.join())return win(tries?8:15);
+   tries++;const m=$('#l2m',el);m.className='fb bad';
+   m.textContent=sel[0]!=='start'?'❌ Alur selalu dimulai dari START.':'❌ Belum tepat. Hitung dulu: apakah "'+q.m.branches[0].cond+'" BENAR untuk '+q.tx+'? Jika benar → ikuti jalur Ya; jika salah → jalur Tidak.';
+   if(tries>=2)$('#l2s',el).hidden=false;};
+  $('#l2s',el).onclick=()=>{solved=true;sel=exp.slice();upd();win(0);};
+ };
+ draw();
+}
+/* Level 3 */
+function lv3(el){
+ const P=[
+  {t:'Kelulusan',s:'Siswa lulus jika nilai minimal 75, selain itu remedial.',c:'INPUT nilai\nIF nilai {0} 75 THEN\n   OUTPUT "Lulus"\n{1}\n   OUTPUT "Remedial"\nENDIF',o:[['>=','<=','=','<'],['ELSE','THEN','ELSE IF','ENDIF']],a:['>=','ELSE']},
+  {t:'Penarikan ATM',s:'Transaksi berhasil hanya jika saldo cukup untuk menarik uang.',c:'INPUT saldo\nINPUT tarik\nIF {0} THEN\n   saldo ← saldo - tarik\n   OUTPUT "Transaksi berhasil"\n{1}\n   OUTPUT "Saldo tidak cukup"\nENDIF',o:[['tarik >= saldo','saldo >= tarik','saldo < tarik','saldo = tarik'],['ELSE','ENDIF','THEN']],a:['saldo >= tarik','ELSE']},
+  {t:'Lampu Lalu Lintas',s:'Merah → Berhenti, kuning → Hati-hati, selain itu Jalan.',c:'INPUT warna\nIF warna == "merah" THEN\n   OUTPUT "Berhenti"\n{0} warna == "kuning" {1}\n   OUTPUT "Hati-hati"\nELSE\n   OUTPUT "Jalan"\nENDIF',o:[['ELSE IF','IF','ELSE','ENDIF'],['THEN','ELSE','ENDIF','DO']],a:['ELSE IF','THEN']},
+  {t:'Tiket Wahana',s:'Anak dengan tinggi kurang dari 120 cm tidak boleh naik.',c:'INPUT tinggi\nIF tinggi {0} 120 THEN\n   OUTPUT "Belum boleh naik"\nELSE\n   OUTPUT {1}\nENDIF',o:[['<','>','==','>='],['"Silakan naik"','"Belum boleh naik"','"Tutup"']],a:['<','"Silakan naik"']}];
+ const done=[];
+ el.innerHTML=P.map((p,i)=>'<div class="card pz" data-i="'+i+'"><h3>Teka-teki '+(i+1)+' · '+p.t+'</h3><p class="muted">'+p.s+'</p><div class="fillcode">'+p.c.split('\n').map(line=>'<div class="l3">'+line.split(/\{(\d)\}/).map((s,j)=>j%2?'<select class="inp bl" data-b="'+s+'"><option value="">— pilih —</option>'+p.o[+s].map(o=>'<option value="'+attr(o)+'">'+esc(o)+'</option>').join('')+'</select>':hl(s)).join('')+'</div>').join('')+'</div><div class="btns"><button class="btn primary" data-chk>Periksa</button><span class="fb"></span></div></div>').join('');
+ el.onclick=e=>{const b=e.target.closest('[data-chk]');if(!b)return;
+  const card=b.closest('.pz'),i=+card.dataset.i,p=P[i],fb=$('.fb',card);if(done[i])return;
+  let ok=0;const sels=$$('.bl',card);
+  sels.forEach(s=>{const right=s.value===p.a[+s.dataset.b];s.classList.toggle('ok',right);s.classList.toggle('bad',!right);if(right)ok++;});
+  if(ok===p.a.length){done[i]=true;fb.className='fb good';fb.textContent='✅ Logika lengkap dan benar!';sels.forEach(s=>s.disabled=true);addScore(card._t?8:15,'g');if(done.filter(Boolean).length===P.length)lvDone(3);}
+  else{card._t=1;fb.className='fb bad';fb.textContent='❌ '+ok+' dari '+p.a.length+' isian benar. Perbaiki yang berwarna merah.';}};
+}
+/* Level 4 */
+function lv4(el){
+ const B=[
+  {sp:'Program harus menampilkan "Lulus" jika nilai ≥ 75, selain itu "Remedial".',code:['INPUT nilai','IF nilai < 75 THEN','   OUTPUT "Lulus"','ELSE','   OUTPUT "Remedial"','ENDIF'],line:1,opts:['IF nilai >= 75 THEN','IF nilai <= 75 THEN','IF nilai = 75 THEN'],a:0,why:'Operator terbalik: nilai 80 akan dianggap Remedial. Gunakan >= 75.'},
+  {sp:'Program membaca umur lalu menentukan hak memilih (umur ≥ 17).',code:['IF umur >= 17 THEN','   OUTPUT "Boleh memilih"','ELSE','   OUTPUT "Belum boleh"','ENDIF','INPUT umur'],line:5,opts:['Pindahkan INPUT umur ke baris paling atas, sebelum IF','Hapus baris INPUT umur','Ganti INPUT umur menjadi OUTPUT umur'],a:0,why:'Variabel harus dibaca (INPUT) sebelum dipakai dalam kondisi.'},
+  {sp:'Tampilkan "Saldo tidak cukup" HANYA jika saldo kurang dari 10000.',code:['INPUT saldo','IF saldo >= 10000 THEN','   OUTPUT "Pembayaran berhasil"','   OUTPUT "Saldo tidak cukup"','ENDIF'],line:3,opts:['Tambahkan ELSE sebelum OUTPUT "Saldo tidak cukup"','Hapus ENDIF','Tambahkan INPUT sebelum IF'],a:0,why:'Tanpa ELSE, kedua pesan tampil sekaligus saat saldo cukup.'},
+  {sp:'Nilai ≥ 90 → "A", ≥ 80 → "B", ≥ 60 → "C", selain itu "D". Nilai 95 malah menghasilkan "C"!',code:['INPUT nilai','IF nilai >= 60 THEN','   OUTPUT "C"','ELSE IF nilai >= 80 THEN','   OUTPUT "B"','ELSE IF nilai >= 90 THEN','   OUTPUT "A"','ELSE','   OUTPUT "D"','ENDIF'],line:1,opts:['Urutkan kondisi dari yang terbesar: mulai dari nilai >= 90','Ganti >= 60 menjadi <= 60','Hapus ELSE terakhir'],a:0,why:'Kondisi longgar (>= 60) menangkap semua nilai besar lebih dulu. Cek yang paling ketat terlebih dahulu.'},
+  {flow:true,sp:'Flowchart ini dimaksudkan: nilai ≥ 75 → "Lulus", selain itu "Remedial". Namun ada kesalahan pada alurnya. Apa perbaikannya?',m:{swap:true,pre:[{t:'io',text:'INPUT nilai'}],branches:[{cond:'nilai >= 75',out:'OUTPUT "Lulus"'}],elseOut:'OUTPUT "Remedial"'},opts:['Tukar label: jalur menuju "Lulus" diberi label Ya, jalur menuju "Remedial" diberi label Tidak','Ganti simbol keputusan menjadi persegi panjang','Hapus simbol END'],a:0,why:'Label Ya/Tidak pada simbol keputusan harus sesuai hasil kondisi.'}];
+ let bi=0;
+ const draw=()=>{
+  const b=B[bi];let stage=b.flow?2:1,wl=0,wo=0;
+  el.innerHTML='<div class="card"><span class="pill">BUG '+(bi+1)+' / '+B.length+'</span><p>'+b.sp+'</p>'+(b.flow?'<div class="flowbox" id="l4f"></div>':'<p class="muted" id="l4h">🔍 Klik baris yang menurutmu mengandung bug.</p><div id="l4c"></div>')+'<div id="l4o"></div><div class="fb" id="l4m"></div></div>';
+  const m=$('#l4m',el),showOpts=()=>{
+   $('#l4o',el).innerHTML='<h4>🛠 Pilih perbaikan yang tepat:</h4><div class="opts">'+b.opts.map((o,i)=>'<button class="opt" data-i="'+i+'">'+esc(o)+'</button>').join('')+'</div>';
+   $('#l4o',el).onclick=e=>{const o=e.target.closest('.opt');if(!o||o.disabled)return;
+    if(+o.dataset.i===b.a){o.classList.add('ok');$$('.opt',el).forEach(x=>x.disabled=true);m.className='fb good';m.textContent='✅ Bug diperbaiki! '+b.why;addScore(wo?5:(b.flow?15:10),'g');
+     if(bi<B.length-1){const d=document.createElement('div');d.className='btns';d.innerHTML='<button class="btn good" id="l4n">Bug berikutnya →</button>';$('#l4o',el).appendChild(d);$('#l4n',el).onclick=()=>{bi++;draw();};}else lvDone(4);}
+    else{wo=1;o.classList.add('bad');o.disabled=true;m.className='fb bad';m.textContent='❌ Perbaikan itu belum menyelesaikan masalah. Coba lagi.';}};};
+  if(b.flow){$('#l4f',el).innerHTML=flowHTML(buildFlow(b.m));showOpts();}
+  else{const c=$('#l4c',el);c.innerHTML=codeHTML(b.code);$$('.ln',c).forEach(l=>l.classList.add('pk'));
+   c.onclick=e=>{const l=e.target.closest('.ln');if(!l||stage!==1)return;const i=+l.dataset.i;
+    if(i===b.line){stage=2;l.classList.remove('pk');l.classList.add('bad');$$('.ln',c).forEach(x=>x.classList.remove('pk'));addScore(wl?2:5,'g');$('#l4h',el).textContent='🐞 Bug ditemukan di baris '+(i+1)+'!';m.className='fb good';m.textContent='Sekarang tentukan perbaikannya.';showOpts();}
+    else{wl=1;l.classList.add('bad');setTimeout(()=>l.classList.remove('bad'),600);m.className='fb bad';m.textContent='❌ Baris '+(i+1)+' tidak bermasalah. Baca ulang spesifikasi dan telusuri alurnya.';}};}
+ };
+ draw();
+}
+/* Level 5 */
+const M5={pre:[{t:'io',text:'INPUT nilai'}],branches:[{cond:'nilai > 100 OR nilai < 0',out:'OUTPUT "Nilai tidak valid"',test:v=>v.nilai>100||v.nilai<0},{cond:'nilai >= 85',out:'OUTPUT "A"',test:v=>v.nilai>=85},{cond:'nilai >= 70',out:'OUTPUT "B"',test:v=>v.nilai>=70}],elseOut:'OUTPUT "C"'};
+function lv5(el){
+ const corr=genPseudo(M5).lines.filter(l=>l!=='START'&&l!=='END');
+ let ans=[],pool=shuf(corr.map((_,i)=>i)),tries=0,solved=false;
+ el.innerHTML='<div class="card"><h3>Studi Kasus: Sistem Nilai Huruf dengan Validasi</h3><div class="callout"><b>Spesifikasi:</b> Baca <code>nilai</code>. Jika di luar rentang 0–100 → "Nilai tidak valid". Jika ≥ 85 → "A". Jika ≥ 70 → "B". Selain itu → "C".</div><h4>Bagian A — Susun pseudocode yang benar</h4><p class="muted">Klik potongan kode untuk menambahkannya ke jawaban (urutan atas → bawah). Klik baris jawaban untuk mengeluarkannya.</p><div class="pool" id="l5p"></div><div class="code ansbox" id="l5a"></div><div class="btns"><button class="btn primary" id="l5k">✔ Periksa Susunan</button><button class="btn ghost" id="l5r">⟲ Ulangi</button></div><div class="fb" id="l5m"></div></div><div id="l5b"></div>';
+ const draw=()=>{
+  $('#l5p',el).innerHTML=pool.map(i=>'<button class="pl" data-i="'+i+'">'+hl(corr[i].trim())+'</button>').join('')||'<span class="muted">Semua potongan telah dipakai.</span>';
+  $('#l5a',el).innerHTML=ans.length?ans.map((i,n)=>'<div class="ln pk" data-i="'+i+'"><span class="no">'+(n+1)+'</span><span>'+hl(solved?corr[i]:corr[i].trim())+'</span></div>').join(''):'<div class="ln"><span class="muted">Jawabanmu akan tampil di sini…</span></div>';
+ };
+ draw();
+ $('#l5p',el).onclick=e=>{const b=e.target.closest('.pl');if(!b||solved)return;const i=+b.dataset.i;pool=pool.filter(x=>x!==i);ans.push(i);draw();};
+ $('#l5a',el).onclick=e=>{const l=e.target.closest('.ln[data-i]');if(!l||solved)return;const i=+l.dataset.i;ans=ans.filter(x=>x!==i);pool.push(i);draw();};
+ $('#l5r',el).onclick=()=>{if(solved)return;ans=[];pool=shuf(corr.map((_,i)=>i));draw();$('#l5m',el).textContent='';};
+ $('#l5k',el).onclick=()=>{if(solved)return;const m=$('#l5m',el);
+  if(ans.length!==corr.length){m.className='fb bad';m.textContent='❌ Masih ada '+(corr.length-ans.length)+' potongan yang belum dipasang.';return;}
+  let ok=0;$$('#l5a .ln',el).forEach((l,n)=>{const right=ans[n]===n;l.classList.toggle('ok',right);l.classList.toggle('bad',!right);if(right)ok++;});
+  if(ok===corr.length){solved=true;m.className='fb good';m.textContent='✅ Susunan sempurna!';addScore(tries?15:30,'g');draw();$$('#l5a .ln',el).forEach(l=>l.classList.add('ok'));partB();}
+  else{tries++;m.className='fb bad';m.textContent='❌ '+ok+' dari '+corr.length+' baris sudah di tempat yang benar (hijau). Perhatikan: validasi dulu, lalu kondisi paling ketat.';}};
+ const partB=()=>{
+  const T=[['nilai = 90','A'],['nilai = 70','B'],['nilai = 105','Nilai tidak valid'],['nilai = 69','C']];
+  $('#l5b',el).innerHTML='<div class="card"><h4>Bagian B — Prediksikan keluaran lalu uji</h4><p class="muted">Jawab dulu, baru buktikan dengan simulator di bawah.</p>'+T.map((t,i)=>mcq('g5q'+i,'Jika <b>'+t[0]+'</b>, keluarannya?',shuf(['A','B','C','Nilai tidak valid']),0,'Keluaran yang benar: '+t[1],10).replace('data-a="0"','data-a="-1"')).join('')+'</div><div class="card"><h4>🧪 Simulator pembuktian</h4><div id="l5d"></div></div>';
+  /* mcq di atas perlu jawaban benar sesuai nilai: bangun ulang dengan indeks yang tepat */
+  const host=$('#l5b .card',el);host.innerHTML='<h4>Bagian B — Prediksikan keluaran lalu uji</h4><p class="muted">Jawab dulu, baru buktikan dengan simulator di bawah.</p>'+T.map((t,i)=>{const o=shuf(['A','B','C','Nilai tidak valid']);return mcq('g5q'+i,'Jika <b>'+t[0]+'</b>, keluarannya?',o,o.indexOf(t[1]),'Keluaran yang benar adalah "'+t[1]+'".',10);}).join('');
+  createDemo($('#l5d',el),{model:M5,vars:[{name:'nilai',type:'number',value:90}]});
+  const chk=()=>{if($$('.mcq .opt.ok',$('#l5b',el)).length>=T.length)lvDone(5);};
+  $('#l5b',el).addEventListener('click',()=>setTimeout(chk,60));
+  if(T.every((_,i)=>S.ans['g5q'+i]&&S.ans['g5q'+i].ok))setTimeout(chk,100);
+ };
+}
+
+/* =====================================================================
+   MODUL 5 — LKPD DIGITAL
+   ===================================================================== */
+const LQ=[
+ ['Perhatikan: INPUT umur; IF umur >= 17 THEN OUTPUT "Dewasa" ENDIF. Jika umur = 17, keluarannya…',['Dewasa','Tidak ada keluaran','Error','17'],0,'Tanda >= berarti "lebih besar atau sama dengan", jadi 17 memenuhi.'],
+ ['Pada program yang sama, jika umur = 16, apa yang terjadi?',['Tampil "Dewasa"','Tidak ada keluaran (blok THEN dilewati)','Error','Tampil "Belum dewasa"'],1,'Tanpa ELSE, kondisi salah berarti blok THEN dilewati.'],
+ ['Simbol flowchart yang memiliki dua jalur keluar berlabel Ya/Tidak adalah…',['Terminator','Proses','Keputusan','Input/Output'],2,'Hanya simbol keputusan (belah ketupat) yang bercabang.'],
+ ['INPUT nilai; IF nilai >= 75 THEN OUTPUT "Lulus" ELSE OUTPUT "Remedial" ENDIF. Untuk nilai = 60 keluarannya…',['Lulus','Remedial','Lulus dan Remedial','Tidak ada'],1,'60 < 75 sehingga kondisi salah dan ELSE dijalankan.'],
+ ['Penyebab umum dua OUTPUT tampil sekaligus pada percabangan adalah…',['Lupa menulis ELSE','Terlalu banyak variabel','Memakai INPUT','Menulis END'],0,'Tanpa ELSE, baris OUTPUT kedua ikut berada dalam blok THEN.'],
+ ['Mengapa pseudocode ditulis sebelum membuat program?',['Agar komputer langsung menjalankannya','Agar logika dirancang tanpa terikat sintaks bahasa tertentu','Karena kompilator mewajibkannya','Supaya program lebih cepat'],1,'Pseudocode memfokuskan pada logika, bukan sintaks.']];
+const FILL=[
+ {id:'f1',pre:'IF suhu ',post:' 37.5 THEN OUTPUT "Demam"',ans:['>=','=>'],hint:'Demam jika suhu minimal 37.5 (37.5 atau lebih).'},
+ {id:'f2',pre:'IF saldo >= harga ',post:' OUTPUT "Pembelian berhasil"',ans:['THEN'],hint:'Kata kunci setelah kondisi IF.'},
+ {id:'f3',pre:'',post:' nama      ← perintah untuk MEMBACA data dari pengguna',ans:['INPUT'],hint:'Kebalikan dari OUTPUT.'},
+ {id:'f4',pre:'IF cuaca == "hujan" THEN\n   OUTPUT "Bawa payung"\n',post:'\n   OUTPUT "Tidak perlu payung"\nENDIF',ans:['ELSE'],hint:'Jalur ketika kondisi bernilai salah.'}];
+views[5]=v=>{
+ v.innerHTML=modHead(5,'Kerjakan latihan: pilihan ganda, isian logika kosong, dan tugas mandiri. Jawaban otomatis diperiksa.')+'<div id="t5"></div>'+finBlock(5);
+ mkTabs($('#t5'),[
+  {t:'A · Pilihan Ganda',r:b=>{b.innerHTML='<div class="card"><h3>Bagian A — Pilihan Ganda (+5 XP/soal)</h3>'+LQ.map((q,i)=>mcq('l'+i,(i+1)+'. '+q[0],q[1],q[2],q[3])).join('')+'</div>';}},
+  {t:'B · Isian Logika',r:lkFill},
+  {t:'C · Tugas Mandiri',r:lkTask},
+  {t:'D · Rekap & Unduh',r:lkRecap}]);
+};
+function normA(s){return String(s).trim().toUpperCase().replace(/\s+/g,'');}
+function lkFill(b){
+ b.innerHTML='<div class="card"><h3>Bagian B — Lengkapi Logika yang Hilang (+8 XP/soal)</h3><p class="muted">Ketik kata kunci atau operator yang tepat pada kotak kosong.</p>'+FILL.map(f=>'<div class="mcq" data-f="'+f.id+'"><div class="fillcode" style="white-space:pre-wrap">'+hl(f.pre)+'<input class="inp'+(S.lk.fill[f.id]?' ok':'')+'" size="8" '+(S.lk.fill[f.id]?'value="'+attr(f.ans[0])+'" disabled':'')+'>'+hl(f.post)+'</div><div class="btns"><button class="btn primary sm" data-fc>Periksa</button><span class="fb'+(S.lk.fill[f.id]?' good':'')+'">'+(S.lk.fill[f.id]?'✅ Benar':'')+'</span></div></div>').join('')+'</div>';
+ b.onclick=e=>{const c=e.target.closest('[data-fc]');if(!c)return;const w=c.closest('[data-f]'),f=FILL.find(x=>x.id===w.dataset.f),inp=$('input',w),fb=$('.fb',w);if(S.lk.fill[f.id])return;
+  if(f.ans.map(normA).includes(normA(inp.value))){S.lk.fill[f.id]=true;inp.classList.remove('bad');inp.classList.add('ok');inp.disabled=true;fb.className='fb good';fb.textContent='✅ Benar!';if(!w._w)addScore(8);else addScore(4);save();}
+  else{w._w=true;inp.classList.add('bad');fb.className='fb bad';fb.textContent='❌ Belum tepat. Petunjuk: '+f.hint;}};
+}
+function lkTask(b){
+ const t2=S.lk.t2;
+ b.innerHTML='<div class="card"><h3>Tugas 1 — Tulis Pseudocode (+20 XP)</h3><p>Sebuah wahana meminta <b>tinggi badan (cm)</b>. Jika tinggi <b>minimal 150</b>, tampilkan <i>"Boleh naik wahana"</i>; jika tidak, tampilkan <i>"Belum cukup tinggi"</i>. Tulis pseudocode lengkapnya.</p><textarea class="inp" id="t1a" placeholder="START&#10;INPUT ...&#10;...">'+esc(S.lk.t1)+'</textarea><div class="btns"><button class="btn primary" id="t1c">🔍 Analisis Jawaban</button></div><div id="t1r"></div></div>'+
+ '<div class="card"><h3>Tugas 2 — Rancang Kasusmu Sendiri</h3><p class="muted">Isi komponen kasus buatanmu; pseudocode &amp; flowchart terbentuk otomatis.</p><div class="g2"><label>Variabel INPUT<input class="inp" id="a1" style="width:100%" value="'+attr(t2.v)+'"></label><label>Kondisi (contoh: umur &gt;= 17)<input class="inp" id="a2" style="width:100%" value="'+attr(t2.c)+'"></label><label>OUTPUT jika kondisi BENAR<input class="inp" id="a3" style="width:100%" value="'+attr(t2.a)+'"></label><label>OUTPUT jika SALAH (boleh kosong → IF-THEN)<input class="inp" id="a4" style="width:100%" value="'+attr(t2.b)+'"></label></div><div class="demo" style="margin-top:12px"><div id="t2c"></div><div class="flowbox" id="t2f"></div></div></div>';
+ $('#t1a',b).oninput=e=>{S.lk.t1=e.target.value;save();};
+ $('#t1c',b).onclick=()=>{
+  const s=S.lk.t1,u=s.toUpperCase();
+  const chk=[['Ada START & END',/START/.test(u)&&/\bEND\b/.test(u)],['Membaca tinggi dengan INPUT',/INPUT\s+\w+/.test(u)],['Memakai IF … THEN',/\bIF\b[\s\S]*\bTHEN\b/.test(u)],['Kondisi memakai angka 150',/150/.test(s)],['Operator tepat: >= (minimal 150)',/>=|≥/.test(s)],['Ada jalur ELSE',/\bELSE\b/.test(u)],['Dua OUTPUT (benar & salah)',(u.match(/OUTPUT/g)||[]).length>=2],['Ditutup dengan ENDIF',/END\s?IF/.test(u)]];
+  const n=chk.filter(c=>c[1]).length;
+  $('#t1r',b).innerHTML='<div class="callout '+(n===8?'ok2':'warn2')+'">'+chk.map(c=>'<div>'+(c[1]?'✅':'⬜')+' '+c[0]+'</div>').join('')+'<b>Skor: '+n+'/8</b></div>'+(n===8?'<p class="okmsg">🎉 Pseudocode lengkap!</p>':'<p class="warn">Lengkapi butir yang belum ✅ lalu analisis lagi.</p>');
+  if(n===8&&!S.lk.t1ok){S.lk.t1ok=true;addScore(20);burst();}};
+ const upd=()=>{
+  S.lk.t2={v:$('#a1',b).value.trim(),c:$('#a2',b).value.trim(),a:$('#a3',b).value,b:$('#a4',b).value};save();
+  const t=S.lk.t2,m={pre:[{t:'io',text:'INPUT '+(t.v||'?')}],branches:[{cond:t.c||'?',out:'OUTPUT "'+(t.a||'?')+'"',test:()=>true}],elseOut:t.b.trim()?'OUTPUT "'+t.b+'"':null};
+  $('#t2c',b).innerHTML=codeHTML(genPseudo(m).lines);$('#t2f',b).innerHTML=flowHTML(buildFlow(m));};
+ ['a1','a2','a3','a4'].forEach(i=>$('#'+i,b).oninput=upd);upd();
+}
+function lkStats(){
+ const mc=LQ.filter((_,i)=>S.ans['l'+i]&&S.ans['l'+i].ok).length,fl=FILL.filter(f=>S.lk.fill[f.id]).length;return{mc,fl};
+}
+function lkRecap(b){
+ const s=lkStats();
+ b.innerHTML='<div class="card"><h3>📊 Rekap LKPD</h3><div class="g3"><div class="card"><b>Pilihan ganda</b><div class="meter"><i style="width:'+s.mc/LQ.length*100+'%"></i></div><small>'+s.mc+' / '+LQ.length+' benar</small></div><div class="card"><b>Isian logika</b><div class="meter"><i style="width:'+s.fl/FILL.length*100+'%"></i></div><small>'+s.fl+' / '+FILL.length+' benar</small></div><div class="card"><b>Tugas mandiri 1</b><div class="meter"><i style="width:'+(S.lk.t1ok?100:0)+'%"></i></div><small>'+(S.lk.t1ok?'Lengkap':'Belum lengkap')+'</small></div></div><div class="btns"><button class="btn primary" id="dl">⬇ Unduh Jawaban (.txt)</button></div></div>';
+ $('#dl',b).onclick=()=>download('LKPD_AlgoQuest.txt','LKPD AlgoQuest — '+(S.name||'Peserta didik')+'\n\nPilihan ganda benar: '+s.mc+'/'+LQ.length+'\nIsian logika benar: '+s.fl+'/'+FILL.length+'\n\n=== TUGAS 1: Pseudocode ===\n'+S.lk.t1+'\n\n=== TUGAS 2: Kasus buatan sendiri ===\nVariabel: '+S.lk.t2.v+'\nKondisi: '+S.lk.t2.c+'\nOUTPUT benar: '+S.lk.t2.a+'\nOUTPUT salah: '+S.lk.t2.b+'\n');
+}
+function download(name,text){
+ try{const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([text],{type:'text/plain;charset=utf-8'}));a.download=name;document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove();},500);}catch(e){toast('Unduhan tidak tersedia di lingkungan ini');}
+}
+
+/* =====================================================================
+   MODUL 6 — REFLEKSI & EVALUASI
+   ===================================================================== */
+const LIK=[['k','Saya dapat menyebutkan fungsi simbol flowchart (terminator, input/output, proses, keputusan).'],['k','Saya dapat membedakan INPUT dan OUTPUT pada pseudocode.'],['k','Saya memahami perbedaan IF-THEN dan IF-THEN-ELSE.'],['s','Saya mampu menulis pseudocode percabangan untuk masalah sederhana.'],['s','Saya mampu menelusuri alur flowchart sesuai nilai input tertentu.'],['m','Sebelum mengerjakan, saya merencanakan langkah/strategi belajar saya.'],['m','Ketika salah, saya menganalisis penyebabnya (bukan sekadar menebak).'],['m','Saya tahu bagian mana yang masih perlu saya pelajari lagi.']];
+const CAT={k:'Pengetahuan Konseptual',s:'Keterampilan Prosedural',m:'Metakognisi'};
+const RQ=['Bagian mana yang paling sulit bagimu, dan strategi apa yang kamu pakai untuk mengatasinya?','Berikan satu contoh situasi sehari-hari (di luar contoh modul) yang memakai percabangan IF-THEN-ELSE.','Apa targetmu selanjutnya setelah materi ini, dan langkah konkret apa yang akan kamu lakukan?'];
+function reflOK(){return LIK.every((_,i)=>S.rf.lik[i])&&S.rf.q.every(q=>q.trim().length>=15);}
+function likAvg(){const r={k:[],s:[],m:[]};LIK.forEach((l,i)=>{if(S.rf.lik[i])r[l[0]].push(S.rf.lik[i]);});const o={};let all=[];for(const k in r){o[k]=r[k].length?r[k].reduce((a,b)=>a+b,0)/r[k].length:0;all=all.concat(r[k]);}o.all=all.length?all.reduce((a,b)=>a+b,0)/all.length:0;return o;}
+function levelOf(x){return x>=4.2?['Sangat Percaya Diri','Pertahankan! Coba tantang dirimu dengan percabangan bersarang & operator AND/OR.']:x>=3.4?['Berkembang Baik','Ulangi Level 4–5 game dan Misi Lab untuk memantapkan.']:x>=2.6?['Perlu Penguatan','Kembali ke Modul 1 (tab Percabangan) dan Modul 2, lalu latih Lab Maya.']:['Perlu Pendampingan','Diskusikan dengan guru/teman, ulangi Modul 1 dengan animasi langkah demi langkah.'];}
+views[6]=v=>{
+ v.innerHTML=modHead(6,'Nilai dirimu secara jujur (skala Likert) dan tulis refleksi. Ini membantumu mengenali cara belajarmu sendiri.')+
+ '<div class="card"><h3>📏 Self-Assessment (1 = Sangat tidak setuju · 5 = Sangat setuju)</h3>'+LIK.map((l,i)=>'<div class="lik"><div><span class="tag in">'+CAT[l[0]]+'</span><br>'+l[1]+'</div><div class="scale" data-l="'+i+'">'+[1,2,3,4,5].map(n=>'<label><input type="radio" name="l'+i+'" value="'+n+'"'+(S.rf.lik[i]===n?' checked':'')+'><span>'+n+'</span></label>').join('')+'</div></div>').join('')+'<div id="likres" style="margin-top:14px"></div></div>'+
+ '<div class="card"><h3>💭 Refleksi (minimal 15 karakter per jawaban)</h3>'+RQ.map((q,i)=>'<p style="margin-top:10px"><b>'+(i+1)+'. '+q+'</b></p><textarea class="inp rq" data-q="'+i+'" placeholder="Tulis refleksimu…">'+esc(S.rf.q[i])+'</textarea><small class="cc">'+S.rf.q[i].trim().length+' karakter</small>').join('')+'</div>'+
+ '<div id="rep"></div>'+finBlock(6);
+ const lr=()=>{const a=likAvg(),n=Object.keys(S.rf.lik).length;$('#likres',v).innerHTML=n?'<div class="g3">'+['k','s','m'].map(k=>'<div><small>'+CAT[k]+'</small><div class="meter"><i style="width:'+a[k]/5*100+'%"></i></div><b>'+a[k].toFixed(1)+' / 5</b></div>').join('')+'</div>'+(n===LIK.length?'<div class="callout ok2" style="margin-top:12px">Rata-rata <b>'+a.all.toFixed(2)+'</b> → <b>'+levelOf(a.all)[0]+'</b>. '+levelOf(a.all)[1]+'</div>':'<small>Jawab semua 8 pernyataan untuk melihat interpretasi.</small>'):'';};
+ lr();
+ v.addEventListener('change',e=>{const s=e.target.closest('.scale');if(s&&e.target.type==='radio'){S.rf.lik[+s.dataset.l]=+e.target.value;save();lr();}});
+ v.addEventListener('input',e=>{if(e.target.classList.contains('rq')){S.rf.q[+e.target.dataset.q]=e.target.value;e.target.nextElementSibling.textContent=e.target.value.trim().length+' karakter';save();}});
+ if(S.done[6])showReport();
+};
+function reportText(){
+ const a=likAvg(),sp=Object.values(S.spent).reduce((x,y)=>x+y,0),gl=Object.keys(S.game.done).filter(k=>S.game.done[k]).length,ms=Object.keys(S.miss).filter(k=>S.miss[k]).length,s=lkStats();
+ return 'LAPORAN BELAJAR — AlgoQuest\n============================\nNama            : '+(S.name||'Peserta didik')+'\nWaktu belajar   : '+fmt(sp)+' dari 120:00\nModul selesai   : '+Object.keys(S.done).filter(k=>S.done[k]).length+'/6\nTotal XP        : '+S.score+'\nGame            : level selesai '+gl+'/5 · skor game '+(S.gs||0)+'\nMisi Lab        : '+ms+'/3\nLKPD            : PG '+s.mc+'/'+LQ.length+' · Isian '+s.fl+'/'+FILL.length+' · Tugas 1 '+(S.lk.t1ok?'lengkap':'belum')+'\n\nSELF-ASSESSMENT (skala 1–5)\n- '+CAT.k+': '+a.k.toFixed(1)+'\n- '+CAT.s+': '+a.s.toFixed(1)+'\n- '+CAT.m+': '+a.m.toFixed(1)+'\n- Rata-rata: '+a.all.toFixed(2)+' ('+levelOf(a.all)[0]+')\n\nREFLEKSI\n'+RQ.map((q,i)=>(i+1)+'. '+q+'\n   → '+S.rf.q[i].trim()).join('\n')+'\n';
+}
+function showReport(){
+ const h=$('#rep');if(!h)return;
+ h.innerHTML='<div class="card"><h3>🏁 Laporan Belajar Akhir</h3><div class="report">'+esc(reportText())+'</div><div class="btns"><button class="btn primary" id="rd">⬇ Unduh Laporan (.txt)</button><button class="btn" id="rp">🖨 Cetak</button></div><div class="callout ok2" style="margin-top:12px">Terima kasih sudah belajar mandiri. Terus latihan membuat flowchart untuk masalah di sekitarmu! 🚀</div></div>';
+ $('#rd').onclick=()=>download('Laporan_AlgoQuest.txt',reportText());$('#rp').onclick=()=>window.print();
+}
+const _fm=finishMod;
+finishMod=function(n){_fm(n);if(n===6&&S.done[6])setTimeout(()=>{showReport();const r=$('#rep');if(r)r.scrollIntoView({behavior:'smooth'});},50);};
+
+/* ---------- start ---------- */
+render();
+</script>
+</body>
+</html>
